@@ -1,0 +1,180 @@
+[gd_scene load_steps=7 format=3 uid="uid://dp060njxo03dx"]
+
+[ext_resource type="Script" path="res://scripts/splat_script.gd" id="1_wxobb"]
+[ext_resource type="Script" path="res://scripts/camera_script.gd" id="2_ri7cd"]
+[ext_resource type="Script" path="res://addons/Gizmo3DScript/gizmo3D.gd" id="3_23uks"]
+[ext_resource type="Script" path="res://scripts/loadFile_script.gd" id="4_p4xnr"]
+
+[sub_resource type="Environment" id="Environment_j5h71"]
+background_mode = 1
+background_color = Color(0.201527, 0.201527, 0.201527, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_grauv"]
+
+[node name="mainNode" type="Node3D"]
+script = ExtResource("1_wxobb")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_j5h71")
+
+[node name="Gizmo3D" type="Node3D" parent="."]
+visible = false
+script = ExtResource("3_23uks")
+
+[node name="UI" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Controls" type="MarginContainer" parent="UI"]
+offset_right = 106.0
+offset_bottom = 112.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/Controls"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/Controls/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Controls/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Controls"
+
+[node name="Move" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Move: WASD"
+
+[node name="Look" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Look: RMB"
+
+[node name="Select" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "De/select: LMB"
+
+[node name="AddTarget" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Add Target: Shift + LMB"
+
+[node name="Gizmo" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Gizmo: LMB"
+
+[node name="Snap" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Snap: CTRL"
+
+[node name="LocalSpace" type="Label" parent="UI/Controls/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Local Space: T"
+
+[node name="Message" type="Label" parent="UI"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Control" type="Control" parent="." node_paths=PackedStringArray("ui")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_p4xnr")
+ui = NodePath("../UI")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(230, 648)
+render_target_update_mode = 4
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+
+[node name="FileDialog" type="FileDialog" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 2
+size = Vector2i(400, 300)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+root_subfolder = "D:\\GameView\\Godot_Projects\\splatandgizmo\\splats"
+use_native_dialog = true
+
+[node name="LoadFile" type="Button" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = 26.0
+offset_right = 110.0
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Load file"
+
+[node name="ColorRect" type="ColorRect" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 76.0
+offset_right = 150.0
+offset_bottom = 276.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.423651, 0.42365, 0.423651, 1)
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer2"]
+handle_input_locally = false
+size = Vector2i(922, 648)
+render_target_update_mode = 4
+
+[node name="Camera" type="Camera3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport" node_paths=PackedStringArray("gizmo", "message")]
+transform = Transform3D(1, 0, 0, 0, 0.871222, 0.490889, 0, -0.490889, 0.871222, 0, 1.22246, 2.47152)
+script = ExtResource("2_ri7cd")
+gizmo = NodePath("../../../../../Gizmo3D")
+message = NodePath("../../../../../UI/Message")
+
+[node name="TextureRect" type="TextureRect" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TestCube" type="MeshInstance3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+visible = false
+mesh = SubResource("BoxMesh_grauv")
+
+[connection signal="fileChosen" from="Control" to="." method="_myReady"]
+[connection signal="file_selected" from="Control/HBoxContainer/SubViewportContainer/SubViewport/FileDialog" to="Control" method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="Control/HBoxContainer/SubViewportContainer/SubViewport/LoadFile" to="Control" method="_on_load_file_pressed"]
