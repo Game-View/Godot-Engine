@@ -1,0 +1,14 @@
+MeshInstance3D
+Control
+CanvasLayer
+Container
+SubViewport
+SubViewportContainer
+HBoxContainer
+FileDialog
+ColorRect
+Button
+RigidBody3D
+CollisionShape3D
+TextureRect
+Gizmo3D
