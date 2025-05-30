@@ -4,7 +4,6 @@ extends Node3D
 @onready var screen_texture = get_node("Control/HBoxContainer/SubViewportContainer2/SubViewport/TextureRect")
 
 var splatBegun: bool = false
-#var static_bindings
 
 var rd = RenderingServer.create_local_rendering_device()
 var pipeline: RID
@@ -25,27 +24,19 @@ var sh_degree = sqrt(num_coeffs_per_color + 1) - 1
 
 var sort_pipeline: RID
 var histogram_pipeline: RID
-# # testing
 var transform_pipeline: RID
-# # testing
 var depth_in_buffer: RID
 var depth_out_buffer: RID
 var histogram_buffer: RID
-# # testing
 var transform_buffer: RID
-# # testing
 var depth_uniform
 var depth_out_uniform
 var histogram_uniform_set0
 var histogram_uniform_set1
-# # testing
 var transform_uniform
-# # testing
 var radixsort_hist_shader: RID
 var radixsort_shader: RID
-# # testing
 var transform_shader: RID
-# # testing
 var globalInvocationSize: int
 
 var num_vertex: int
@@ -53,9 +44,7 @@ var output_tex: RID
 
 var camera_matrices_buffer: RID
 var params_buffer: RID
-# # testing
 var transform_params_buffer: RID
-# # testing
 var modifier: float = 1.0
 var last_direction := Vector3.ZERO
 
@@ -102,7 +91,6 @@ func _load_ply_file(filename: String):
 			plyFile.vertex_count = line2
 		elif line.begins_with("property"):
 			num_properties += 1
-			print("property " + str(num_properties) + " = " + line)
 		elif line.begins_with("end_header"):
 			break
 		line = file.get_line()
@@ -160,9 +148,7 @@ func _myReady(filename: String):
 	
 	radixsort_shader = shaderLib.createShader("res://shaders/multi_radixsort.glsl", rd)
 	radixsort_hist_shader = shaderLib.createShader("res://shaders/multi_radixsort_histograms.glsl", rd)
-	# # testing
 	transform_shader = shaderLib.createShader("res://shaders/compute_example.glsl", rd)
-	# # testing
 	
 	globalInvocationSize = num_vertex / NUM_BLOCKS_PER_WORKGROUP
 	var remainder = num_vertex % NUM_BLOCKS_PER_WORKGROUP
@@ -181,22 +167,16 @@ func _myReady(filename: String):
 
 	depth_out_buffer = rd.storage_buffer_create(depth_out_data.size() * 4, depth_out_data.to_byte_array(), RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
 	histogram_buffer = rd.storage_buffer_create(hist_data.size() * 4, hist_data.to_byte_array(), RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
-	# # testing
 	transform_buffer = rd.storage_buffer_create(PlyFile.rawData.size() * 4, PlyFile.rawData.to_byte_array(), RenderingDevice.STORAGE_BUFFER_USAGE_DISPATCH_INDIRECT)
-	# # testing
-		
+	
 	depth_out_uniform = shaderLib.createUniform(depth_out_buffer, 1)
 	histogram_uniform_set0 = shaderLib.createUniform(histogram_buffer, 1)
 	histogram_uniform_set1 = shaderLib.createUniform(histogram_buffer, 2)
-	# # testing
 	transform_uniform = shaderLib.createUniform(transform_buffer, 0)
-	# # testing
 	
 	sort_pipeline = rd.compute_pipeline_create(radixsort_shader)
 	histogram_pipeline = rd.compute_pipeline_create(radixsort_hist_shader)
-	# # testing
 	transform_pipeline = rd.compute_pipeline_create(transform_shader)
-	# # testing
 
 	# Configure splat vertex/frag shader
 	shader = shaderLib.createShader("res://shaders/splat.glsl", rd)
@@ -258,11 +238,6 @@ func _myReady(filename: String):
 	framebuffer = rd.framebuffer_create([output_tex], framebuffer_format)
 	print("framebuffer valid: ",rd.framebuffer_is_valid(framebuffer))
 	
-	#static_bindings = PlyFile.getStaticBindings(rd)
-	#var floatArray = PackedFloat32Array()
-	#for ply in PlyFile.allFiles.values():
-	#	floatArray.append_array(ply.vertices)
-	
 	var static_bindings = [
 		transform_uniform
 	]
@@ -292,9 +267,7 @@ func _myReady(filename: String):
 	# Do once to ensure splat drawn in correct order at start
 	update()
 	render()
-	#printAllBuffers("Before radix in ready")
 	radix_sort()
-	#printAllBuffers("After radix in ready")
 
 # Reconfigure render pipeline with new viewport size
 func _on_viewport_size_changed():
@@ -389,11 +362,8 @@ func render():
 
 func _process(_delta):	
 	if splatBegun:
-		#if(Input.is_action_just_pressed("debug")):
 		if(Input.is_action_pressed("debug")):
-			#printAllBuffers("Before transform")
 			transformSplat(0.02)
-			#printAllBuffers("After transform")
 		if(Input.is_action_pressed("debug2")):
 			transformSplat(-0.02)
 		update()
@@ -413,16 +383,11 @@ func _sort_splats_by_depth():
 	
 	# Only re-sort if camera has changed enough
 	if angle > 0.2:
-		# # testing
-		#printAllBuffers("Before radix in sortsplats")
 		radix_sort()
-		#printAllBuffers("After radix in sortsplats")
-		# # testing
 		last_direction = direction
 
 func transformSplat(dist: float):
 	var params = PackedFloat32Array([PlyFile.property_count, dist]).to_byte_array()
-	#var params = PackedFloat32Array([sh_degree]).to_byte_array()
 	transform_params_buffer = rd.storage_buffer_create(params.size(), params)
 	var params_uniform = shaderLib.createUniform(transform_params_buffer, 1)
 	var transform_bindings = [
@@ -433,32 +398,19 @@ func transformSplat(dist: float):
 	var compute_list := rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, transform_pipeline)
 	rd.compute_list_bind_uniform_set(compute_list, transform_uniform_set, 0)
-	#var shaderPropertyThing = 1
-	var transformInvocations: int = (num_vertex * PlyFile.property_count + 620 - 1) / 620
-	#var transformInvocations: int = num_vertex * PlyFile.property_count / 620
+	var shaderSizeX = 620
+	var transformInvocations: int = (num_vertex * PlyFile.property_count + shaderSizeX - 1) / shaderSizeX
 	rd.compute_list_dispatch(compute_list, transformInvocations, 1, 1)
 	rd.compute_list_add_barrier(compute_list)
 	rd.compute_list_end()
 	rd.submit()
 	rd.sync()
-	
-	#var output_bytes = rd.buffer_get_data(transform_buffer)
 
 # # testing
 func printBuffer(buffer: RID, text: String):
-	#print(text + ": \t" + str(rd.buffer_get_data(buffer, 0, PlyFile.property_count * 4).to_float32_array()))
-	var v1: PackedFloat32Array = rd.buffer_get_data(buffer, 0, 12).to_float32_array()
 	for offset: int in range(10):
 		var temp = rd.buffer_get_data(buffer, PlyFile.property_count * 4 * offset, 12).to_float32_array()
 		print(text + str(offset) + ": \t" + str(temp))
-	#var v2: PackedFloat32Array = rd.buffer_get_data(buffer, PlyFile.property_count * 4).to_float32_array()
-	#print(text + ": \t" + str(rd.buffer_get_data(buffer, 0, 12).to_float32_array()))
-func printAllBuffers(header: String):
-	print(header)
-	#printBuffer(depth_in_buffer, "depth-in")
-	#printBuffer(depth_out_buffer, "depth-out")
-	#printBuffer(histogram_buffer, "histogram")
-	printBuffer(transform_buffer, "transform")
 
 class PlyFile:
 	var name: String
@@ -484,15 +436,6 @@ class PlyFile:
 		vertices = data
 		offset = rawData.size()
 		rawData.append_array(vertices)
-	
-	static func getStaticBindings(rd: RenderingDevice):
-		var byteArray = PackedFloat32Array()
-		for ply in allFiles.values():
-			byteArray.append_array(ply.vertices)
-		var byteArray2 = byteArray.to_byte_array()
-		var buffer = rd.storage_buffer_create(byteArray2.size(), byteArray2)
-		var uniform = shaderLib.createUniform(buffer, 0)
-		return [uniform]
 
 class shaderLib:
 	static func createUniform(buffer: RID, binding: int):

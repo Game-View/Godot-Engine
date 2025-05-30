@@ -19,7 +19,7 @@ void main() {
 	float a  = gl_GlobalInvocationID.x;
 	float b = params.property_count;
 	if(a - (b * floor(a/b)) == 0) {//a mod b (only the x property)
-		//my_data_buffer.data[gl_GlobalInvocationID.x] += 1.0;
+		my_data_buffer.data[gl_GlobalInvocationID.x] += params.dist;
 		
 		//spherical explosion
 		/*vec3 direction = normalize(vec3(my_data_buffer.data[gl_GlobalInvocationID.x], my_data_buffer.data[gl_GlobalInvocationID.x + 1], my_data_buffer.data[gl_GlobalInvocationID.x + 2]));
@@ -36,11 +36,11 @@ void main() {
 		my_data_buffer.data[gl_GlobalInvocationID.x + 61] = 0;*/
 		
 		//split in half
-		if(my_data_buffer.data[gl_GlobalInvocationID.x] < 0) {
+		/*if(my_data_buffer.data[gl_GlobalInvocationID.x] < 0) {
 			my_data_buffer.data[gl_GlobalInvocationID.x] -= params.dist;
 		}
 		else {
 			my_data_buffer.data[gl_GlobalInvocationID.x] += params.dist;
-		}
+		}*/
 	}
 }
