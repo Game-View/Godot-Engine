@@ -456,7 +456,6 @@ func transformScale(file: String, amount: float):
 	var newThing = log(amount)/log(2.7182818284590459)
 	byteStream.put_float(amount)
 	#ln(x) = log(x) / log(e)
-	#modifier *= amount
 	byteStream.put_float(newThing)
 	byteStream.put_float(0)
 	transformSplat(byteStream.data_array, PlyFile.allFiles.get(file), 4)

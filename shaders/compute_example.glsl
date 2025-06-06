@@ -37,10 +37,10 @@ vec4 eulerToQuat(vec3 euler) {
     float sz = sin(euler.z * 0.5);
 
     return vec4(
-        sx * cy * cz - cx * sy * sz, //x
-        cx * sy * cz + sx * cy * sz,
-        cx * cy * sz - sx * sy * cz,
-        cx * cy * cz + sx * sy * sz  //w
+        sx * cy * cz + cx * sy * sz, //x
+        cx * sy * cz - sx * cy * sz, //y
+        cx * cy * sz + sx * sy * cz, //z
+        cx * cy * cz - sx * sy * sz  //w
     );
 }
 
@@ -48,15 +48,9 @@ vec4 quatMultiply(vec4 q1, vec4 q2) {
     return vec4(
         q1.w*q2.x + q1.x*q2.w + q1.y*q2.z - q1.z*q2.y, //x
         q1.w*q2.y - q1.x*q2.z + q1.y*q2.w + q1.z*q2.x, //y
-        q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w,
-        q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z
+        q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w, //z
+        q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z  //w
     );
-	/*return vec4(
-        a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,  // 1
-        a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,  // i
-        a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,  // j
-        a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w   // k
-    );*/
 }
 
 vec3 rotateVectorByQuat(vec3 v, vec4 q) {
@@ -90,16 +84,21 @@ void main() {
 				globalParams.centerY,
 				globalParams.centerZ
 			);
-			vec3 euler = vec3(
+			vec3 eulerPos = vec3(
 				params.float1,
 				params.float2,
 				params.float3
 			);
+			vec3 eulerRot = vec3(
+				-params.float3,
+				params.float2,
+				-params.float1
+			);
 
-			vec4 q_rot = eulerToQuat(euler);
-			vec3 new_pos = rotateVectorByQuat(pos - pivot, q_rot) + pivot;
-			//vec4 new_quat = quatMultiply(q_rot, quat);
-			vec4 new_quat = quatMultiply(quat, q_rot);
+			vec4 q_rot_pos = eulerToQuat(eulerPos);
+			vec4 q_rot_rot = eulerToQuat(eulerRot);
+			vec3 new_pos = rotateVectorByQuat(pos - pivot, q_rot_pos) + pivot;
+			vec4 new_quat = quatMultiply(quat, q_rot_rot);
 
 			myDataBuffer.data[xid] = new_pos.x;
 			myDataBuffer.data[xid + 1] = new_pos.y;
