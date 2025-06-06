@@ -5,6 +5,14 @@ extends Node3D
 
 var splatBegun: bool = false
 
+# # temp debug
+var splatNames = []
+var splatNameIndex = 0
+var transformationIndex = 0
+var transformAxis = 0
+var iterationsSinceRadix = 0
+# # temp debug
+
 var rd = RenderingServer.create_local_rendering_device()
 var pipeline: RID
 var shader: RID
@@ -44,6 +52,7 @@ var output_tex: RID
 
 var camera_matrices_buffer: RID
 var params_buffer: RID
+var transform_global_params_buffer: RID
 var transform_params_buffer: RID
 var modifier: float = 1.0
 var last_direction := Vector3.ZERO
@@ -81,6 +90,9 @@ func _load_ply_file(filename: String):
 		return
 	
 	var plyFile = PlyFile.create(filename)
+	# # temp debug
+	splatNames.append(plyFile.name)
+	# # temp debug
 
 	var num_properties = 0
 	var line = file.get_line()
@@ -99,8 +111,9 @@ func _load_ply_file(filename: String):
 	print("num splats: ", plyFile.vertex_count)
 	print("num properties: ", num_properties)
 	
-	plyFile.appendRawData(file.get_buffer(plyFile.vertex_count * num_properties * 4).to_float32_array())
-	print("vertices size: " + str(plyFile.vertices.size()))
+	var data: PackedFloat32Array = file.get_buffer(plyFile.vertex_count * num_properties * 4).to_float32_array()
+	plyFile.appendRawData(data)
+	print("vertices size: " + str(data.size()))
 	file.close()
 	return plyFile
 
@@ -304,7 +317,6 @@ func radix_sort():
 			histogram_uniform_set0
 		]
 		var hist_uniform_set = rd.uniform_set_create(histogram_bindings, radixsort_hist_shader, 0)
-		# todo
 		rd.compute_list_bind_compute_pipeline(compute_list, histogram_pipeline)
 		rd.compute_list_set_push_constant(compute_list, push_constant.to_byte_array(), push_constant.size() * 4)
 		rd.compute_list_bind_uniform_set(compute_list, hist_uniform_set, 0)
@@ -362,10 +374,42 @@ func render():
 
 func _process(_delta):	
 	if splatBegun:
-		if(Input.is_action_pressed("debug")):
-			transformSplat(0.02)
-		if(Input.is_action_pressed("debug2")):
-			transformSplat(-0.02)
+		if(Input.is_action_just_pressed("debug1")):
+			splatNameIndex = (splatNameIndex + 1) % splatNames.size()
+			print("Selected " + splatNames[splatNameIndex])
+		if(Input.is_action_just_pressed("debug2")):
+			transformationIndex = (transformationIndex + 1) % 3
+			if(transformationIndex == 0):
+				print("Set to TRANSLATE")
+			elif(transformationIndex == 1):
+				print("Set to ROTATE")
+			else:
+				print("Set to SCALE")
+		if(Input.is_action_just_pressed("debug3")):
+			transformAxis = (transformAxis + 1) % 3
+			match transformAxis:
+				0:
+					print("Set to x")
+				1:
+					print("Set to y")
+				2:
+					print("Set to z")
+		if(Input.is_action_pressed("debug4")):
+			match transformationIndex:
+				0:
+					transformTranslate(splatNames[splatNameIndex], transformAxis, 0.01)
+				1:
+					transformRotate(splatNames[splatNameIndex], transformAxis, 0.005)
+				2:
+					transformScale(splatNames[splatNameIndex], 1.02)
+		if(Input.is_action_pressed("debug5")):
+			match transformationIndex:
+				0:
+					transformTranslate(splatNames[splatNameIndex], transformAxis, -0.01)
+				1:
+					transformRotate(splatNames[splatNameIndex], transformAxis, -0.005)
+				2:
+					transformScale(splatNames[splatNameIndex], 1/1.02)
 		update()
 		render()
 
@@ -386,37 +430,86 @@ func _sort_splats_by_depth():
 		radix_sort()
 		last_direction = direction
 
-func transformSplat(dist: float):
-	var params = PackedFloat32Array([PlyFile.property_count, dist]).to_byte_array()
+func transformTranslate(file: String, direction: int, dist: float):
+	var byteStream = StreamPeerBuffer.new()
+	byteStream.put_32(direction)
+	byteStream.put_float(dist)
+	byteStream.put_float(0)
+	byteStream.put_float(0)
+	var ply: PlyFile = PlyFile.allFiles.get(file)
+	ply.center[direction] += dist
+	transformSplat(byteStream.data_array, ply, 2)
+
+func transformRotate(file: String, axis: int, angle: float):
+	var byteStream = StreamPeerBuffer.new()
+	byteStream.put_32(0)
+	for i in range(axis):
+		byteStream.put_float(0)
+	byteStream.put_float(angle)
+	for i in range(2 - axis):
+		byteStream.put_float(0)
+	transformSplat(byteStream.data_array, PlyFile.allFiles.get(file), 3)
+
+func transformScale(file: String, amount: float):
+	var byteStream = StreamPeerBuffer.new()
+	byteStream.put_32(0)
+	var newThing = log(amount)/log(2.7182818284590459)
+	byteStream.put_float(amount)
+	#ln(x) = log(x) / log(e)
+	#modifier *= amount
+	byteStream.put_float(newThing)
+	byteStream.put_float(0)
+	transformSplat(byteStream.data_array, PlyFile.allFiles.get(file), 4)
+
+func transformSplat(params: PackedByteArray, plyFile: PlyFile, transformation: int):
+	var globalStream = StreamPeerBuffer.new()
+	globalStream.put_32(transformation)
+	globalStream.put_32(plyFile.offset)
+	globalStream.put_32(plyFile.vertex_count)
+	globalStream.put_32(PlyFile.property_count)
+	globalStream.put_32(plyFile.center.x)
+	globalStream.put_32(plyFile.center.y)
+	globalStream.put_32(plyFile.center.z)
+	var globalParams: PackedByteArray = globalStream.data_array
+	transform_global_params_buffer = rd.storage_buffer_create(globalParams.size(), globalParams)
+	var globalParams_uniform = shaderLib.createUniform(transform_global_params_buffer, 1)
+	
 	transform_params_buffer = rd.storage_buffer_create(params.size(), params)
-	var params_uniform = shaderLib.createUniform(transform_params_buffer, 1)
+	var params_uniform = shaderLib.createUniform(transform_params_buffer, 2)
+	
 	var transform_bindings = [
 		transform_uniform,
+		globalParams_uniform,
 		params_uniform
 	]
 	var transform_uniform_set = rd.uniform_set_create(transform_bindings, transform_shader, 0)
 	var compute_list := rd.compute_list_begin()
 	rd.compute_list_bind_compute_pipeline(compute_list, transform_pipeline)
 	rd.compute_list_bind_uniform_set(compute_list, transform_uniform_set, 0)
-	var shaderSizeX = 620
-	var transformInvocations: int = (num_vertex * PlyFile.property_count + shaderSizeX - 1) / shaderSizeX
+	var shaderSizeX = 128
+	var transformInvocations: int = (num_vertex + shaderSizeX - 1) / shaderSizeX
 	rd.compute_list_dispatch(compute_list, transformInvocations, 1, 1)
 	rd.compute_list_add_barrier(compute_list)
 	rd.compute_list_end()
 	rd.submit()
 	rd.sync()
+	iterationsSinceRadix += 1
+	if(iterationsSinceRadix >= 10):
+		radix_sort()
+		iterationsSinceRadix = 0
 
 # # testing
-func printBuffer(buffer: RID, text: String):
-	for offset: int in range(10):
-		var temp = rd.buffer_get_data(buffer, PlyFile.property_count * 4 * offset, 12).to_float32_array()
-		print(text + str(offset) + ": \t" + str(temp))
+func printBuffer(buffer: RID, text: String, start: int, length: int):
+	var temp = rd.buffer_get_data(buffer, PlyFile.property_count * 4 * start, length * 4).to_float32_array()
+	for j in range(temp.size()):
+		temp[j] = round(temp[j]*1000)
+	print(text + str(start) + ": \t" + str(temp))
 
 class PlyFile:
 	var name: String
 	var vertex_count: int
-	var vertices: PackedFloat32Array
 	var offset: int
+	var center: Vector3
 	
 	static var property_count: int
 	static var allFiles: Dictionary
@@ -430,12 +523,12 @@ class PlyFile:
 		var plyFile = PlyFile.new()
 		plyFile.name = splitName
 		allFiles[splitName] = plyFile
+		plyFile.center = Vector3.ZERO
 		return plyFile
 	
 	func appendRawData(data: PackedFloat32Array):
-		vertices = data
 		offset = rawData.size()
-		rawData.append_array(vertices)
+		rawData.append_array(data)
 
 class shaderLib:
 	static func createUniform(buffer: RID, binding: int):
