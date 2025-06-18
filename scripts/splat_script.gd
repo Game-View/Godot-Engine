@@ -10,8 +10,6 @@ var splatBegun: bool = false
 # # temp debug
 var splatNames = []
 var splatNameIndex = 0
-var transformationIndex = 0
-var transformAxis = 0
 var iterationsSinceRadix = 0
 # # temp debug
 
@@ -423,7 +421,7 @@ func translateSplat(motion: Vector3):
 	byteStream.put_float(-motion.y)
 	byteStream.put_float(-motion.z)
 	var ply: PlyFile = PlyFile.allFiles.get(splatNames[splatNameIndex])
-	ply.center += motion
+	ply.center += Vector3(motion.x, -motion.y, -motion.z)
 	transformSplat(byteStream.data_array, ply, 2)
 
 # mouse controlled
