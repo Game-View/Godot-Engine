@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dp060njxo03dx"]
+[gd_scene load_steps=10 format=3 uid="uid://dp060njxo03dx"]
 
 [ext_resource type="Script" path="res://scripts/splat_script.gd" id="1_wxobb"]
 [ext_resource type="Script" path="res://scripts/camera_script.gd" id="2_ri7cd"]
@@ -11,15 +11,18 @@ background_color = Color(0.201527, 0.201527, 0.201527, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_grauv"]
 
-[node name="mainNode" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_ahcnu"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_en6rc"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_w2gma"]
+
+[node name="mainNode" type="Node3D" node_paths=PackedStringArray("gizmo")]
 script = ExtResource("1_wxobb")
+gizmo = NodePath("Control/HBoxContainer/SubViewportContainer2/SubViewport/Gizmo3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_j5h71")
-
-[node name="Gizmo3D" type="Node3D" parent="."]
-visible = false
-script = ExtResource("3_23uks")
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
@@ -164,7 +167,7 @@ render_target_update_mode = 4
 [node name="Camera" type="Camera3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport" node_paths=PackedStringArray("gizmo", "message")]
 transform = Transform3D(1, 0, 0, 0, 0.871222, 0.490889, 0, -0.490889, 0.871222, 0, 1.22246, 2.47152)
 script = ExtResource("2_ri7cd")
-gizmo = NodePath("../../../../../Gizmo3D")
+gizmo = NodePath("../Gizmo3D")
 message = NodePath("../../../../../UI/Message")
 
 [node name="TextureRect" type="TextureRect" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
@@ -175,6 +178,27 @@ offset_bottom = 40.0
 visible = false
 mesh = SubResource("BoxMesh_grauv")
 
+[node name="StaticBody3D" type="StaticBody3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/TestCube"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/TestCube/StaticBody3D"]
+shape = SubResource("BoxShape3D_ahcnu")
+
+[node name="Gizmo3D" type="Node3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+script = ExtResource("3_23uks")
+
+[node name="Cube2" type="Node3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/Cube2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/Cube2/StaticBody3D"]
+shape = SubResource("BoxShape3D_en6rc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/Cube2"]
+mesh = SubResource("BoxMesh_w2gma")
+
 [connection signal="fileChosen" from="Control" to="." method="_myReady"]
 [connection signal="file_selected" from="Control/HBoxContainer/SubViewportContainer/SubViewport/FileDialog" to="Control" method="_on_file_dialog_file_selected"]
 [connection signal="pressed" from="Control/HBoxContainer/SubViewportContainer/SubViewport/LoadFile" to="Control" method="_on_load_file_pressed"]
+[connection signal="splatRotate" from="Control/HBoxContainer/SubViewportContainer2/SubViewport/Gizmo3D" to="." method="rotateSplat"]
+[connection signal="splatScale" from="Control/HBoxContainer/SubViewportContainer2/SubViewport/Gizmo3D" to="." method="scaleSplat"]
+[connection signal="splatTranslate" from="Control/HBoxContainer/SubViewportContainer2/SubViewport/Gizmo3D" to="." method="translateSplat"]

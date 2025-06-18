@@ -1,7 +1,17 @@
 #[compute]
 #version 450
 
-// Invocations
+#define PROP_X 0
+#define PROP_Y 1
+#define PROP_Z 2
+#define PROP_SCALE_X 55
+#define PROP_SCALE_Y 56
+#define PROP_SCALE_Z 57
+#define PROP_QROT_X 58
+#define PROP_QROT_Y 59
+#define PROP_QROT_Z 60
+#define PROP_QROT_W 61
+
 layout(local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
 
 layout(set = 0, binding = 0, std430) buffer MyDataBuffer {
@@ -21,7 +31,6 @@ layout(set = 0, binding = 1, std430) restrict buffer GlobalParams {
 globalParams;
 
 layout(set = 0, binding = 2, std430) restrict buffer Params {
-	int integer;
 	float float1;
 	float float2;
 	float float3;
@@ -65,19 +74,21 @@ void main() {
 	int endPoint = (globalParams.offset + (globalParams.size * globalParams.property_count));
 	if(xid >= byteOffset && xid < endPoint) {
 		if(globalParams.transformation == 2) {//translate
-			myDataBuffer.data[xid + params.integer] += params.float1;
+			myDataBuffer.data[xid + PROP_X] += params.float1;
+			myDataBuffer.data[xid + PROP_Y] += params.float2;
+			myDataBuffer.data[xid + PROP_Z] += params.float3;
 		}
 		else if(globalParams.transformation == 3) {//rotate
 			vec3 pos = vec3(
-				myDataBuffer.data[xid],
-				myDataBuffer.data[xid + 1],
-				myDataBuffer.data[xid + 2]
+				myDataBuffer.data[xid + PROP_X],
+				myDataBuffer.data[xid + PROP_Y],
+				myDataBuffer.data[xid + PROP_Z]
 			);
 			vec4 quat = vec4(
-				myDataBuffer.data[xid + 58],
-				myDataBuffer.data[xid + 59],
-				myDataBuffer.data[xid + 60],
-				myDataBuffer.data[xid + 61]
+				myDataBuffer.data[xid + PROP_QROT_X],
+				myDataBuffer.data[xid + PROP_QROT_Y],
+				myDataBuffer.data[xid + PROP_QROT_Z],
+				myDataBuffer.data[xid + PROP_QROT_W]
 			);
 			vec3 pivot = vec3(
 				globalParams.centerX,
@@ -100,21 +111,24 @@ void main() {
 			vec3 new_pos = rotateVectorByQuat(pos - pivot, q_rot_pos) + pivot;
 			vec4 new_quat = quatMultiply(quat, q_rot_rot);
 
-			myDataBuffer.data[xid] = new_pos.x;
-			myDataBuffer.data[xid + 1] = new_pos.y;
-			myDataBuffer.data[xid + 2] = new_pos.z;
-			myDataBuffer.data[xid + 58] = new_quat.x;
-			myDataBuffer.data[xid + 59] = new_quat.y;
-			myDataBuffer.data[xid + 60] = new_quat.z;
-			myDataBuffer.data[xid + 61] = new_quat.w;
+			myDataBuffer.data[xid + PROP_X] = new_pos.x;
+			myDataBuffer.data[xid + PROP_Y] = new_pos.y;
+			myDataBuffer.data[xid + PROP_Z] = new_pos.z;
+			myDataBuffer.data[xid + PROP_QROT_X] = new_quat.x;
+			myDataBuffer.data[xid + PROP_QROT_Y] = new_quat.y;
+			myDataBuffer.data[xid + PROP_QROT_Z] = new_quat.z;
+			myDataBuffer.data[xid + PROP_QROT_W] = new_quat.w;
 		}
 		else if(globalParams.transformation == 4) {//scale
-			myDataBuffer.data[xid] *= params.float1;
-			myDataBuffer.data[xid + 1] *= params.float1;
-			myDataBuffer.data[xid + 2] *= params.float1;
-			myDataBuffer.data[xid + 55] += params.float2;
-			myDataBuffer.data[xid + 56] += params.float2;
-			myDataBuffer.data[xid + 57] += params.float2;
+			float cenX = globalParams.centerX;
+			float cenY = globalParams.centerY;
+			float cenZ = globalParams.centerZ;
+			myDataBuffer.data[xid + PROP_X] = (myDataBuffer.data[xid + PROP_X] - cenX) * params.float1 + cenX;
+			myDataBuffer.data[xid + PROP_Y] = (myDataBuffer.data[xid + PROP_Y] - cenY) * params.float1 + cenY;
+			myDataBuffer.data[xid + PROP_Z] = (myDataBuffer.data[xid + PROP_Z] - cenZ) * params.float1 + cenZ;
+			myDataBuffer.data[xid + PROP_SCALE_X] += params.float2;
+			myDataBuffer.data[xid + PROP_SCALE_Y] += params.float2;
+			myDataBuffer.data[xid + PROP_SCALE_Z] += params.float2;
 		}
 	}
 }

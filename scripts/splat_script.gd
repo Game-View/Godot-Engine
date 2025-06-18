@@ -3,6 +3,8 @@ extends Node3D
 @onready var camera = get_node("Control/HBoxContainer/SubViewportContainer2/SubViewport/Camera")
 @onready var screen_texture = get_node("Control/HBoxContainer/SubViewportContainer2/SubViewport/TextureRect")
 
+@export var gizmo: Gizmo3D
+
 var splatBegun: bool = false
 
 # # temp debug
@@ -161,7 +163,7 @@ func _myReady(filename: String):
 	
 	radixsort_shader = shaderLib.createShader("res://shaders/multi_radixsort.glsl", rd)
 	radixsort_hist_shader = shaderLib.createShader("res://shaders/multi_radixsort_histograms.glsl", rd)
-	transform_shader = shaderLib.createShader("res://shaders/compute_example.glsl", rd)
+	transform_shader = shaderLib.createShader("res://shaders/transformation.glsl", rd)
 	
 	globalInvocationSize = num_vertex / NUM_BLOCKS_PER_WORKGROUP
 	var remainder = num_vertex % NUM_BLOCKS_PER_WORKGROUP
@@ -374,42 +376,9 @@ func render():
 
 func _process(_delta):	
 	if splatBegun:
-		if(Input.is_action_just_pressed("debug1")):
+		if(Input.is_action_just_pressed("debug4")):
 			splatNameIndex = (splatNameIndex + 1) % splatNames.size()
 			print("Selected " + splatNames[splatNameIndex])
-		if(Input.is_action_just_pressed("debug2")):
-			transformationIndex = (transformationIndex + 1) % 3
-			if(transformationIndex == 0):
-				print("Set to TRANSLATE")
-			elif(transformationIndex == 1):
-				print("Set to ROTATE")
-			else:
-				print("Set to SCALE")
-		if(Input.is_action_just_pressed("debug3")):
-			transformAxis = (transformAxis + 1) % 3
-			match transformAxis:
-				0:
-					print("Set to x")
-				1:
-					print("Set to y")
-				2:
-					print("Set to z")
-		if(Input.is_action_pressed("debug4")):
-			match transformationIndex:
-				0:
-					transformTranslate(splatNames[splatNameIndex], transformAxis, 0.01)
-				1:
-					transformRotate(splatNames[splatNameIndex], transformAxis, 0.005)
-				2:
-					transformScale(splatNames[splatNameIndex], 1.02)
-		if(Input.is_action_pressed("debug5")):
-			match transformationIndex:
-				0:
-					transformTranslate(splatNames[splatNameIndex], transformAxis, -0.01)
-				1:
-					transformRotate(splatNames[splatNameIndex], transformAxis, -0.005)
-				2:
-					transformScale(splatNames[splatNameIndex], 1/1.02)
 		update()
 		render()
 
@@ -419,6 +388,23 @@ func _input(event):
 			modifier += 0.05
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
 			modifier = clampf(modifier - 0.05, 0, 2147483647)
+	if gizmo.hovering || gizmo.editing:
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var cam := camera.get_viewport().get_camera_3d()
+		var dir := cam.project_ray_normal(event.position)
+		var from := cam.project_ray_origin(event.position)
+		var params = PhysicsRayQueryParameters3D.new()
+		params.from = from
+		params.to = from + dir * 1000.0
+		var result = get_world_3d().direct_space_state.intersect_ray(params)
+		print("Result size: " + str(result.size()))
+		if result.size() == 0:
+			return
+		var collider = result["collider"] as Node3D
+		var node = collider.get_parent()
+		gizmo.clear_selection()
+		gizmo.select(node)
 
 func _sort_splats_by_depth():
 	var direction = camera.global_transform.basis.z.normalized()
@@ -430,35 +416,37 @@ func _sort_splats_by_depth():
 		radix_sort()
 		last_direction = direction
 
-func transformTranslate(file: String, direction: int, dist: float):
+# mouse controlled
+func translateSplat(motion: Vector3):
 	var byteStream = StreamPeerBuffer.new()
-	byteStream.put_32(direction)
-	byteStream.put_float(dist)
-	byteStream.put_float(0)
-	byteStream.put_float(0)
-	var ply: PlyFile = PlyFile.allFiles.get(file)
-	ply.center[direction] += dist
+	byteStream.put_float(motion.x)
+	byteStream.put_float(-motion.y)
+	byteStream.put_float(-motion.z)
+	var ply: PlyFile = PlyFile.allFiles.get(splatNames[splatNameIndex])
+	ply.center += motion
 	transformSplat(byteStream.data_array, ply, 2)
 
-func transformRotate(file: String, axis: int, angle: float):
+# mouse controlled
+func rotateSplat(axis: Vector3):
 	var byteStream = StreamPeerBuffer.new()
-	byteStream.put_32(0)
-	for i in range(axis):
-		byteStream.put_float(0)
-	byteStream.put_float(angle)
-	for i in range(2 - axis):
-		byteStream.put_float(0)
-	transformSplat(byteStream.data_array, PlyFile.allFiles.get(file), 3)
+	byteStream.put_float(axis.x)
+	byteStream.put_float(-axis.y)
+	byteStream.put_float(-axis.z)
+	var ply: PlyFile = PlyFile.allFiles.get(splatNames[splatNameIndex])
+	transformSplat(byteStream.data_array, ply, 3)
 
-func transformScale(file: String, amount: float):
+# mouse controlled
+func scaleSplat(motion: Vector3):
+	var s = max(motion.x, motion.y, motion.z)
+	if s == 1:
+		s = min(motion.x, motion.y, motion.z)
 	var byteStream = StreamPeerBuffer.new()
-	byteStream.put_32(0)
-	var newThing = log(amount)/log(2.7182818284590459)
-	byteStream.put_float(amount)
-	#ln(x) = log(x) / log(e)
+	var newThing = log(s)/log(2.7182818284590459)
+	byteStream.put_float(s)
 	byteStream.put_float(newThing)
 	byteStream.put_float(0)
-	transformSplat(byteStream.data_array, PlyFile.allFiles.get(file), 4)
+	var ply: PlyFile = PlyFile.allFiles.get(splatNames[splatNameIndex])
+	transformSplat(byteStream.data_array, ply, 4)
 
 func transformSplat(params: PackedByteArray, plyFile: PlyFile, transformation: int):
 	var globalStream = StreamPeerBuffer.new()
@@ -466,9 +454,9 @@ func transformSplat(params: PackedByteArray, plyFile: PlyFile, transformation: i
 	globalStream.put_32(plyFile.offset)
 	globalStream.put_32(plyFile.vertex_count)
 	globalStream.put_32(PlyFile.property_count)
-	globalStream.put_32(plyFile.center.x)
-	globalStream.put_32(plyFile.center.y)
-	globalStream.put_32(plyFile.center.z)
+	globalStream.put_float(plyFile.center.x)
+	globalStream.put_float(plyFile.center.y)
+	globalStream.put_float(plyFile.center.z)
 	var globalParams: PackedByteArray = globalStream.data_array
 	transform_global_params_buffer = rd.storage_buffer_create(globalParams.size(), globalParams)
 	var globalParams_uniform = shaderLib.createUniform(transform_global_params_buffer, 1)

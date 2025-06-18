@@ -8,6 +8,16 @@ extends Node3D
 ## [url=https://github.com/godotengine/godot/blob/master/editor/plugins/node_3d_editor_plugin.h]source[/url] and
 ## [url=https://github.com/godotengine/godot/blob/master/editor/plugins/node_3d_editor_plugin.cpp]header[/url] file.
 
+signal splatTranslate(Vector3)
+signal splatRotate(Vector3)
+signal splatScale(Vector3)
+
+# # testing
+var lastTranslate: Vector3
+var lastRotate: float
+var lastScale: Vector3
+# # testing
+
 const DEFAULT_FLOAT_STEP := 0.001
 const MAX_Z := 1000000.0
 
@@ -216,6 +226,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if !_editing:
 			_update_transform_gizmo_view()
 			return
+		lastTranslate = Vector3.ZERO
+		lastRotate = 0
+		lastScale = Vector3.ZERO
 		_edit.mouse_pos = event.position
 		_editing = _transform_gizmo_select(event.position)
 	elif event is InputEventMouseMotion:
@@ -1058,12 +1071,16 @@ func _compute_transform(mode: TransformMode, original: Transform3D, original_loc
 				# Recalculate orthogonalized scale without moving origin.
 				if orthogonal:
 					s.basis = GizmoHelper.scaled_orthogonal(original.basis, motion + Vector3.ONE)
+			emit_signal("splatScale", motion + Vector3.ONE - lastScale)
+			lastScale = motion
 			return s
 		TransformMode.TRANSLATE:
 			if snapping:
 				motion = motion.snappedf(extra)
 			if local:
 				return original_local.translated_local(motion)
+			emit_signal("splatTranslate", motion - lastTranslate)
+			lastTranslate = motion
 			return original.translated(motion)
 		TransformMode.ROTATE:
 			if local:
@@ -1074,9 +1091,10 @@ func _compute_transform(mode: TransformMode, original: Transform3D, original_loc
 			else:
 				var blocal := original.basis * original_local.basis.inverse()
 				var axis := motion * blocal
-				return Transform3D(
+				var output: Transform3D = Transform3D(
 					blocal * Basis(axis.normalized(), extra) * original_local.basis,
 					Basis(motion, extra) * (original.origin - _edit.center) + _edit.center)
+				return output
 	push_error("Gizmo3D#ComputeTransform: Invalid mode")
 	return Transform3D()
 
@@ -1272,6 +1290,8 @@ func _update_transform(shift: bool) -> void:
 			var compute_axis := global_axis
 			if rlocal_coords:
 				compute_axis = local_axis
+			emit_signal("splatRotate", (angle - lastRotate) * compute_axis)
+			lastRotate = angle
 			_apply_transform(compute_axis, angle)
 
 func _apply_transform(motion: Vector3, snap: float) -> void:

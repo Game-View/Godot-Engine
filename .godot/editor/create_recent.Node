@@ -1,4 +1,9 @@
 MeshInstance3D
+CollisionShape3D
+StaticBody3D
+Node3D
+CollisionPolygon3D
+RigidBody3D
 Control
 CanvasLayer
 Container
@@ -7,8 +12,3 @@ SubViewportContainer
 HBoxContainer
 FileDialog
 ColorRect
-Button
-RigidBody3D
-CollisionShape3D
-TextureRect
-Gizmo3D

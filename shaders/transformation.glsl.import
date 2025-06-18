@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bklnmii5rbenj"
+path="res://.godot/imported/transformation.glsl-4842d743d3b7eae1653f3aeac47cdfa4.res"
+
+[deps]
+
+source_file="res://shaders/transformation.glsl"
+dest_files=["res://.godot/imported/transformation.glsl-4842d743d3b7eae1653f3aeac47cdfa4.res"]
+
+[params]
+
