@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3 uid="uid://x3w3whcd137h"]
+
+[ext_resource type="Script" path="res://scripts/MPSection.gd" id="1_xh4n2"]
+
+[node name="MP_Section" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xh4n2")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.154
+offset_right = -2.0
+offset_bottom = 0.207993
+
+[node name="MP_Section" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBoxContainer/MP_Section"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.068
+anchor_right = 0.474
+anchor_bottom = 0.544
+offset_top = -0.00400019
+offset_right = 0.0899887
+offset_bottom = -0.0320015
+text = "SpaceShip That I Like"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Price" type="Label" parent="VBoxContainer/MP_Section"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.641
+anchor_right = 0.474
+anchor_bottom = 0.763
+offset_top = -0.21402
+offset_right = -0.152039
+offset_bottom = -0.00201416
+text = "$100.00"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Image" type="TextureRect" parent="VBoxContainer/MP_Section"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.572
+anchor_top = 0.087
+anchor_right = 1.0
+anchor_bottom = 0.893
+offset_left = 0.0199966
+offset_top = 0.0389996
+offset_bottom = 0.0209961
+expand_mode = 1

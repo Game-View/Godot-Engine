@@ -1,0 +1,152 @@
+[gd_scene load_steps=17 format=3 uid="uid://c1ppd01h2h5gk"]
+
+[ext_resource type="Script" path="res://scripts/loadFile_script.gd" id="1_dudpp"]
+[ext_resource type="Script" path="res://scripts/DemoManager.gd" id="1_o557v"]
+[ext_resource type="Resource" uid="uid://c6m0dtt8rvbs8" path="res://demo_assests/DItem1.tres" id="2_d8ifq"]
+[ext_resource type="Script" path="res://scripts/MP_Item_Info.gd" id="2_ewnew"]
+[ext_resource type="PackedScene" uid="uid://x3w3whcd137h" path="res://scenes/MP_Selection.tscn" id="2_loj7a"]
+[ext_resource type="Script" path="res://scripts/camera_script.gd" id="2_s0nbe"]
+[ext_resource type="Script" path="res://addons/Gizmo3DScript/gizmo3D.gd" id="3_dvdhy"]
+[ext_resource type="Resource" uid="uid://b2odb6fvgpy32" path="res://demo_assests/DItem2.tres" id="3_ik7d6"]
+[ext_resource type="Resource" uid="uid://d38gjluoupng5" path="res://demo_assests/DItem3.tres" id="4_trwox"]
+
+[sub_resource type="Theme" id="Theme_kiu0q"]
+
+[sub_resource type="Theme" id="Theme_vpj0q"]
+
+[sub_resource type="Theme" id="Theme_wvv87"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6nuyg"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mf6wq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vb6w1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_20voq"]
+
+[node name="MarketplaceScene" type="Node3D"]
+script = ExtResource("1_o557v")
+items = Array[ExtResource("2_ewnew")]([ExtResource("2_d8ifq"), ExtResource("3_ik7d6"), ExtResource("4_trwox")])
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dudpp")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/HBoxContainer"]
+y_sort_enabled = true
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/HBoxContainer/SubViewportContainer"]
+custom_minimum_size = Vector2(230, 500)
+layout_mode = 2
+theme = SubResource("Theme_kiu0q")
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer/SubViewportContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_vpj0q")
+theme_override_constants/separation = 105
+
+[node name="Section_1" parent="Control/HBoxContainer/SubViewportContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_loj7a")]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_wvv87")
+
+[node name="Section_2" parent="Control/HBoxContainer/SubViewportContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_loj7a")]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_wvv87")
+
+[node name="Section_3" parent="Control/HBoxContainer/SubViewportContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_loj7a")]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_wvv87")
+
+[node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(230, 648)
+render_target_update_mode = 4
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+
+[node name="FileDialog" type="FileDialog" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 2
+size = Vector2i(400, 300)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+root_subfolder = "D:\\GameView\\Godot_Projects\\splatandgizmo\\splats"
+use_native_dialog = true
+
+[node name="Button" type="Button" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+offset_left = 12.0
+offset_top = 587.0
+offset_right = 205.0
+offset_bottom = 618.0
+text = "Publish To Market Place
+"
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer2"]
+handle_input_locally = false
+size = Vector2i(922, 648)
+render_target_update_mode = 4
+
+[node name="Camera" type="Camera3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport" node_paths=PackedStringArray("gizmo")]
+transform = Transform3D(1, 0, 0, 0, 0.871222, 0.490889, 0, -0.490889, 0.871222, 0, 1.22246, 2.47152)
+script = ExtResource("2_s0nbe")
+gizmo = NodePath("../Gizmo3D")
+
+[node name="TextureRect" type="TextureRect" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TestCube" type="MeshInstance3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+visible = false
+mesh = SubResource("BoxMesh_6nuyg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/TestCube"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/TestCube/StaticBody3D"]
+shape = SubResource("BoxShape3D_mf6wq")
+
+[node name="Gizmo3D" type="Node3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+script = ExtResource("3_dvdhy")
+
+[node name="Cube2" type="Node3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/Cube2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/Cube2/StaticBody3D"]
+shape = SubResource("BoxShape3D_vb6w1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/Cube2"]
+mesh = SubResource("BoxMesh_20voq")
+
+[connection signal="file_selected" from="Control/HBoxContainer/SubViewportContainer/SubViewport/FileDialog" to="Control" method="_on_file_dialog_file_selected"]

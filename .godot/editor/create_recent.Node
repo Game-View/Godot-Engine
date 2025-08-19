@@ -1,3 +1,10 @@
+VBoxContainer
+MarginContainer
+Button
+Label
+TextureRect
+HBoxContainer
+CanvasLayer
 MeshInstance3D
 CollisionShape3D
 StaticBody3D
@@ -5,10 +12,3 @@ Node3D
 CollisionPolygon3D
 RigidBody3D
 Control
-CanvasLayer
-Container
-SubViewport
-SubViewportContainer
-HBoxContainer
-FileDialog
-ColorRect

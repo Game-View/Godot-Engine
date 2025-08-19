@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MP_Item_Info" load_steps=3 format=3 uid="uid://d38gjluoupng5"]
+
+[ext_resource type="Script" path="res://scripts/MP_Item_Info.gd" id="1_jyfom"]
+[ext_resource type="Texture2D" uid="uid://byp7rxrf7irnd" path="res://demo_assests/Screenshot 2025-06-07 182229.png" id="1_kk4hw"]
+
+[resource]
+script = ExtResource("1_jyfom")
+title = "Thanking Tree"
+USDprice = 50.0
+image = ExtResource("1_kk4hw")
+path = "./path"
