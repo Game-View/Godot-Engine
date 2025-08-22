@@ -1,10 +1,12 @@
-[gd_scene load_steps=14 format=3 uid="uid://c1ppd01h2h5gk"]
+[gd_scene load_steps=16 format=3 uid="uid://c1ppd01h2h5gk"]
 
 [ext_resource type="Script" path="res://scripts/DemoManager.gd" id="1_o557v"]
+[ext_resource type="Resource" uid="uid://c6m0dtt8rvbs8" path="res://demo_assests/DItem1.tres" id="2_d8ifq"]
+[ext_resource type="Script" path="res://scripts/MP_Item_Info.gd" id="2_ewnew"]
 [ext_resource type="PackedScene" uid="uid://x3w3whcd137h" path="res://scenes/MP_Selection.tscn" id="2_loj7a"]
 [ext_resource type="Script" path="res://addons/Gizmo3DScript/gizmo3D.gd" id="3_dvdhy"]
-[ext_resource type="Script" path="res://scenes/awsInit.gd" id="3_xcecs"]
-[ext_resource type="Script" path="res://presignUrl.gd" id="4_p8cwi"]
+[ext_resource type="Resource" uid="uid://b2odb6fvgpy32" path="res://demo_assests/DItem2.tres" id="3_ik7d6"]
+[ext_resource type="Resource" uid="uid://d38gjluoupng5" path="res://demo_assests/DItem3.tres" id="4_trwox"]
 [ext_resource type="Script" path="res://scenes/MPSelector.gd" id="6_m8y4i"]
 
 [sub_resource type="Theme" id="Theme_kiu0q"]
@@ -23,6 +25,7 @@
 
 [node name="MarketplaceScene" type="Node3D"]
 script = ExtResource("1_o557v")
+items = Array[ExtResource("2_ewnew")]([ExtResource("2_d8ifq"), ExtResource("3_ik7d6"), ExtResource("4_trwox")])
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -41,14 +44,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
-script = ExtResource("3_xcecs")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="Control/HBoxContainer"]
 y_sort_enabled = true
 layout_mode = 2
 size_flags_horizontal = 3
 stretch = true
-script = ExtResource("4_p8cwi")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/HBoxContainer/SubViewportContainer"]
 custom_minimum_size = Vector2(230, 500)

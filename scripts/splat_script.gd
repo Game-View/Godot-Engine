@@ -111,6 +111,7 @@ func _load_ply_file(filename: String):
 	print("num splats: ", plyFile.vertex_count)
 	print("num properties: ", num_properties)
 	
+	#Why * 4?
 	var data: PackedFloat32Array = file.get_buffer(plyFile.vertex_count * num_properties * 4).to_float32_array()
 	plyFile.appendRawData(data)
 	print("vertices size: " + str(data.size()))

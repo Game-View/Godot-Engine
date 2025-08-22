@@ -1,7 +1,8 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1755639622
+::res://::1755724215
 export_presets.cfg::TextFile::-1::1754774561::0::1::::<><>::
 icon.svg::CompressedTexture2D::3466009540800156697::1754774562::1755559551::1::::<><>::
+monkeytest.fbx::PackedScene::449758829296858963::1755724215::1755724218::0::::<><>::
 ::res://addons/::1754774561
 ::res://addons/Gizmo3DScript/::1754779718
 edit_data.gd::GDScript::-1::1754774561::0::1::::EditData<>Object<>::
@@ -10,27 +11,28 @@ gizmo_helper.gd::GDScript::-1::1754774561::0::1::::GizmoHelper<>Node<>::
 gizmo_loader.gd::GDScript::-1::1754774561::0::1::::GizmoLoader<>EditorPlugin<>::
 plugin.cfg::TextFile::-1::1754774561::0::1::::<><>::
 selected_item.gd::GDScript::-1::1754774561::0::1::::SelectedItem<>Object<>::
-::res://demo_assests/::1755639759
-DItem1.tres::Resource/MP_Item_Info::6974992364232650145::1755639671::0::1::::<><>::res://scripts/MP_Item_Info.gd
-DItem2.tres::Resource/MP_Item_Info::4310606324159673323::1755639681::0::1::::<><>::res://scripts/MP_Item_Info.gd
-DItem3.tres::Resource/MP_Item_Info::9193055122246292758::1755639689::0::1::::<><>::res://scripts/MP_Item_Info.gd
+::res://demo_assests/::1755640027
+DItem1.tres::Resource/MP_Item_Info::6974992364232650145::1755640007::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://bafvkettxaxtu::::res://demo_assests/Screenshot 2025-05-13 101111.png
+DItem2.tres::Resource/MP_Item_Info::4310606324159673323::1755640027::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://ccgmthgrrp5s2::::res://demo_assests/Screenshot 2025-05-13 140020.png
+DItem3.tres::Resource/MP_Item_Info::9193055122246292758::1755640022::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://byp7rxrf7irnd::::res://demo_assests/Screenshot 2025-06-07 182229.png
 Screenshot 2025-05-13 101111.png::CompressedTexture2D::2398035727589265158::1755639759::1755639762::1::::<><>::
 Screenshot 2025-05-13 140020.png::CompressedTexture2D::4926368232912038431::1755639759::1755639759::1::::<><>::
 Screenshot 2025-06-07 182229.png::CompressedTexture2D::4103893134150687777::1755639759::1755639759::1::::<><>::
 ::res://exports/::1754774562
-::res://scenes/::1755639691
-main.tscn::PackedScene::8265631718896196277::1755567179::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd<>res://scripts/loadFile_script.gd
-marketplace_scene.tscn::PackedScene::6629634434162259862::1755639691::0::1::::<><>::res://scripts/loadFile_script.gd<>res://scripts/DemoManager.gd<>uid://x3w3whcd137h::::res://scenes/MP_Selection.tscn<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd
-MP_Selection.tscn::PackedScene::1673532923281887159::1755639560::0::1::::<><>::res://scripts/MPSection.gd
-::res://scripts/::1755639560
+::res://scenes/::1755724212
+main.tscn::PackedScene::8265631718896196277::1755724212::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd<>res://scripts/loadFile_script.gd
+marketplace_scene.tscn::PackedScene::6629634434162259862::1755724211::0::1::::<><>::res://scripts/loadFile_script.gd<>res://scripts/DemoManager.gd<>uid://c6m0dtt8rvbs8::::res://demo_assests/DItem1.tres<>res://scripts/MP_Item_Info.gd<>uid://x3w3whcd137h::::res://scenes/MP_Selection.tscn<>res://addons/Gizmo3DScript/gizmo3D.gd<>uid://b2odb6fvgpy32::::res://demo_assests/DItem2.tres<>uid://d38gjluoupng5::::res://demo_assests/DItem3.tres
+MP_Selection.tscn::PackedScene::1673532923281887159::1755724212::0::1::::<><>::res://scripts/MPSection.gd
+MAmain.tscn::PackedScene::8501017461020495088::1755724211::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/loadFile_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd
+::res://scripts/::1755724211
 camera_script.gd::GDScript::-1::1754774562::0::1::::<>Camera3D<>::
-DemoManager.gd::GDScript::-1::1755639560::0::1::::<>Node3D<>::
+DemoManager.gd::GDScript::-1::1755639962::0::1::::<>Node3D<>::
 demo_script.gd::GDScript::-1::1754774562::0::1::::<>Node3D<>::
 gizmo_script.gd::GDScript::-1::1754774562::0::1::::<>Node3D<>::
-loadFile_script.gd::GDScript::-1::1755634756::0::1::::<>Control<>::
-MPSection.gd::GDScript::-1::1755639524::0::1::::MPSection<>Control<>::
-MP_Item_Info.gd::GDScript::-1::1755638264::0::1::::MP_Item_Info<>Resource<>::
-splat_script.gd::GDScript::-1::1755634756::0::1::::<>Node3D<>::
+loadFile_script.gd::GDScript::-1::1755708728::0::1::::<>Control<>::
+MPSection.gd::GDScript::-1::1755724211::0::1::::MPSection<>Control<>::
+MP_Item_Info.gd::GDScript::-1::1755639805::0::1::::MP_Item_Info<>Resource<>::
+splat_script.gd::GDScript::-1::1755714045::0::1::::<>Node3D<>::
 ::res://shaders/::1755559551
 multi_radixsort.glsl::RDShaderFile::4676752916565015600::1754774562::1755559551::1::::<><>::
 multi_radixsort_histograms.glsl::RDShaderFile::7139903625888006796::1754774562::1755559551::1::::<><>::

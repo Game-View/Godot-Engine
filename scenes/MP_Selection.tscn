@@ -60,3 +60,5 @@ offset_left = 0.0199966
 offset_top = 0.0389996
 offset_bottom = 0.0209961
 expand_mode = 1
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
