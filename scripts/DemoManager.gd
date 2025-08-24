@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var sections : Array[MPSection] = []
+var sections : Array[MPSection] = []
 @export var items : Array[MP_Item_Info] = []
 var sectionContainer: VBoxContainer
 
@@ -12,8 +12,9 @@ var TOC : Dictionary
 func _ready() -> void:
 	
 	sectionContainer = $Control/HBoxContainer/SubViewportContainer/ScrollContainer/VBoxContainer
-	$Control/HBoxContainer.sign_in("mikeytest","G4m3Vi3w!")
+	#$Control/HBoxContainer.sign_in("mikeytest","G4m3Vi3w!")
 	#_get_TOC();
+	_fill_sections(items)
 		
 
 func _get_TOC() -> void:
@@ -49,10 +50,11 @@ func _fill_items(TableOfContents : Dictionary):
 
 func _fill_sections(items : Array[MP_Item_Info]):
 	for i in range(0,items.size()):
-		var section : MPSection
-		section.assignDetails(items[i])
-		sections.append(section)
+		var section : MPSection = load("res://scenes/MP_Selection.tscn").instantiate()
 		sectionContainer.add_child(section)
+		section.assignDetails(items[i])
+		section._attach_script()
+		sections.append(section)
 		
 func _on_image_request_completed(result, response_code, headers, body,itemName,httpsthread,imgPath):
 	print(itemName)

@@ -1,11 +1,12 @@
 [gd_resource type="Resource" script_class="MP_Item_Info" load_steps=3 format=3 uid="uid://c6m0dtt8rvbs8"]
 
+[ext_resource type="Texture2D" uid="uid://d1ghecr01ee7k" path="res://demo_assests/cubeImg.png" id="1_cs78j"]
 [ext_resource type="Script" path="res://scripts/MP_Item_Info.gd" id="1_khsp8"]
-[ext_resource type="Texture2D" uid="uid://bafvkettxaxtu" path="res://demo_assests/Screenshot 2025-05-13 101111.png" id="1_m2h2h"]
 
 [resource]
 script = ExtResource("1_khsp8")
-title = "Mushroom House"
+title = "Red Cube"
 USDprice = 10.0
-image = ExtResource("1_m2h2h")
-path = "./path"
+image = ExtResource("1_cs78j")
+imagePath = "res://demo_assests/cubeImg.png"
+path = "res://demo_assests/cubetest.obj"

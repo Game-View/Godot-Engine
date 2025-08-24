@@ -1,8 +1,10 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1755724215
+::res://::1756000092
 export_presets.cfg::TextFile::-1::1754774561::0::1::::<><>::
 icon.svg::CompressedTexture2D::3466009540800156697::1754774562::1755559551::1::::<><>::
-monkeytest.fbx::PackedScene::449758829296858963::1755724215::1755724218::0::::<><>::
+MA_Gizmo.gd::GDScript::-1::1755998379::0::1::::MA_Gizmo<>Node3D<>::
+presignUrl.gd::GDScript::-1::1755889351::0::1::::<>Node<>::
+RigidbodyGizmo.gd::GDScript::-1::1755993537::0::1::::RigidbodyGizmo<>RigidBody3D<>::
 ::res://addons/::1754774561
 ::res://addons/Gizmo3DScript/::1754779718
 edit_data.gd::GDScript::-1::1754774561::0::1::::EditData<>Object<>::
@@ -11,28 +13,43 @@ gizmo_helper.gd::GDScript::-1::1754774561::0::1::::GizmoHelper<>Node<>::
 gizmo_loader.gd::GDScript::-1::1754774561::0::1::::GizmoLoader<>EditorPlugin<>::
 plugin.cfg::TextFile::-1::1754774561::0::1::::<><>::
 selected_item.gd::GDScript::-1::1754774561::0::1::::SelectedItem<>Object<>::
-::res://demo_assests/::1755640027
-DItem1.tres::Resource/MP_Item_Info::6974992364232650145::1755640007::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://bafvkettxaxtu::::res://demo_assests/Screenshot 2025-05-13 101111.png
-DItem2.tres::Resource/MP_Item_Info::4310606324159673323::1755640027::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://ccgmthgrrp5s2::::res://demo_assests/Screenshot 2025-05-13 140020.png
-DItem3.tres::Resource/MP_Item_Info::9193055122246292758::1755640022::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://byp7rxrf7irnd::::res://demo_assests/Screenshot 2025-06-07 182229.png
-Screenshot 2025-05-13 101111.png::CompressedTexture2D::2398035727589265158::1755639759::1755639762::1::::<><>::
-Screenshot 2025-05-13 140020.png::CompressedTexture2D::4926368232912038431::1755639759::1755639759::1::::<><>::
-Screenshot 2025-06-07 182229.png::CompressedTexture2D::4103893134150687777::1755639759::1755639759::1::::<><>::
+::res://demo_assests/::1755984297
+cubeImg.png::CompressedTexture2D::8996990546796657274::1755981643::1755981715::1::::<><>::
+cubetest.obj::Mesh::884612293207737936::1755981682::1755981683::1::::<><>::
+DItem1.tres::Resource/MP_Item_Info::6974992364232650145::1755981758::0::1::::<><>::uid://d1ghecr01ee7k::::res://demo_assests/cubeImg.png<>res://scripts/MP_Item_Info.gd
+DItem2.tres::Resource/MP_Item_Info::4310606324159673323::1755984297::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://5gviwgbx8jvt::::res://demo_assests/monkeyImg.png
+DItem3.tres::Resource/MP_Item_Info::9193055122246292758::1755982187::0::1::::<><>::res://scripts/MP_Item_Info.gd<>uid://ccgmthgrrp5s2::::res://demo_assests/Screenshot 2025-05-13 140020.png
+monkeyImg.png::CompressedTexture2D::2119342083724674073::1755981643::1755981727::1::::<><>::
+monkeytest.fbx::PackedScene::2229452211479838557::1755981478::1755982095::1::::<><>::
+PartyHat.fbx::PackedScene::6023208433182796625::1755981533::1755981553::1::::<><>::
+Screenshot 2025-05-13 101111.png::CompressedTexture2D::2398035727589265158::1755889351::1755981226::1::::<><>::
+Screenshot 2025-05-13 140020.png::CompressedTexture2D::4926368232912038431::1755889351::1755982172::1::::<><>::
+Screenshot 2025-06-07 182229.png::CompressedTexture2D::4103893134150687777::1755889351::1755981226::1::::<><>::
+Tower.fbx::PackedScene::3953937946727685558::1755981970::1755982079::1::::<><>::uid://cbacs07loxsvc::::res://demo_assests/TowerWalls.png<>uid://c7xifdbiyvjs7::::res://demo_assests/TowerTopWindows.png<>uid://b3ejic5juop4s::::res://demo_assests/TowerDoor.png<>uid://camx1t4yymev1::::res://demo_assests/TowerBottomWindows.png<>uid://diveqnam46pra::::res://demo_assests/TowerSupports.png<>uid://oqpnvnvvd3fb::::res://demo_assests/TowerRoofTiling.png<>uid://4vfow5c1hks7::::res://demo_assests/TowerSideWalls.png
+TowerBottomWindows.png::CompressedTexture2D::4799057865776055444::1755981970::1755981994::1::::<><>::
+TowerDoor.png::CompressedTexture2D::4360526707687431160::1755981970::1755981994::1::::<><>::
+TowerRoofTiling.png::CompressedTexture2D::1016608949264838243::1755981970::1755981994::1::::<><>::
+TowerSideWalls.png::CompressedTexture2D::2079158186400433860::1755981970::1755981994::1::::<><>::
+TowerSupports.png::CompressedTexture2D::7764396857081128774::1755981970::1755981994::1::::<><>::
+TowerTopWindows.png::CompressedTexture2D::7066859876569516176::1755981970::1755981994::1::::<><>::
+TowerWalls.png::CompressedTexture2D::4843185152336974348::1755981970::1755981994::1::::<><>::
 ::res://exports/::1754774562
-::res://scenes/::1755724212
-main.tscn::PackedScene::8265631718896196277::1755724212::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd<>res://scripts/loadFile_script.gd
-marketplace_scene.tscn::PackedScene::6629634434162259862::1755724211::0::1::::<><>::res://scripts/loadFile_script.gd<>res://scripts/DemoManager.gd<>uid://c6m0dtt8rvbs8::::res://demo_assests/DItem1.tres<>res://scripts/MP_Item_Info.gd<>uid://x3w3whcd137h::::res://scenes/MP_Selection.tscn<>res://addons/Gizmo3DScript/gizmo3D.gd<>uid://b2odb6fvgpy32::::res://demo_assests/DItem2.tres<>uid://d38gjluoupng5::::res://demo_assests/DItem3.tres
-MP_Selection.tscn::PackedScene::1673532923281887159::1755724212::0::1::::<><>::res://scripts/MPSection.gd
-MAmain.tscn::PackedScene::8501017461020495088::1755724211::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/loadFile_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd
-::res://scripts/::1755724211
+::res://scenes/::1755998445
+awsInit.gd::GDScript::-1::1755889351::0::1::::<>Node<>::
+main.tscn::PackedScene::8265631718896196277::1755998417::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd<>res://scripts/loadFile_script.gd
+MAmain.tscn::PackedScene::8501017461020495088::1755998416::0::1::::<><>::res://scripts/splat_script.gd<>res://scripts/loadFile_script.gd<>res://scripts/camera_script.gd<>res://addons/Gizmo3DScript/gizmo3D.gd
+marketplace_scene.tscn::PackedScene::6629634434162259862::1755998445::0::1::::<><>::res://scripts/DemoManager.gd<>res://scripts/MP_Item_Info.gd<>uid://c6m0dtt8rvbs8::::res://demo_assests/DItem1.tres<>res://scenes/awsInit.gd<>uid://b2odb6fvgpy32::::res://demo_assests/DItem2.tres<>res://presignUrl.gd<>uid://d38gjluoupng5::::res://demo_assests/DItem3.tres<>res://scenes/MPSelector.gd<>res://MA_Gizmo.gd
+MPSelector.gd::GDScript::-1::1755889351::0::1::::<>Control<>::
+MP_Selection.tscn::PackedScene::1673532923281887159::1755998417::0::1::::<><>::res://scripts/MPSection.gd
+::res://scripts/::1755993489
 camera_script.gd::GDScript::-1::1754774562::0::1::::<>Camera3D<>::
-DemoManager.gd::GDScript::-1::1755639962::0::1::::<>Node3D<>::
+DemoManager.gd::GDScript::-1::1755982871::0::1::::<>Node3D<>::
 demo_script.gd::GDScript::-1::1754774562::0::1::::<>Node3D<>::
-gizmo_script.gd::GDScript::-1::1754774562::0::1::::<>Node3D<>::
-loadFile_script.gd::GDScript::-1::1755708728::0::1::::<>Control<>::
-MPSection.gd::GDScript::-1::1755724211::0::1::::MPSection<>Control<>::
-MP_Item_Info.gd::GDScript::-1::1755639805::0::1::::MP_Item_Info<>Resource<>::
-splat_script.gd::GDScript::-1::1755714045::0::1::::<>Node3D<>::
+gizmo_script.gd::GDScript::-1::1755984021::0::1::::gizmo_Script<>Node3D<>::
+loadFile_script.gd::GDScript::-1::1755981269::0::1::::<>Control<>::
+MPSection.gd::GDScript::-1::1755993489::0::1::::MPSection<>Control<>::
+MP_Item_Info.gd::GDScript::-1::1755889351::0::1::::MP_Item_Info<>Resource<>::
+splat_script.gd::GDScript::-1::1755981269::0::1::::<>Node3D<>::
 ::res://shaders/::1755559551
 multi_radixsort.glsl::RDShaderFile::4676752916565015600::1754774562::1755559551::1::::<><>::
 multi_radixsort_histograms.glsl::RDShaderFile::7139903625888006796::1754774562::1755559551::1::::<><>::

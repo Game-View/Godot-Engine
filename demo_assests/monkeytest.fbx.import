@@ -3,19 +3,20 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://gn4pykvdmmsp"
-valid=false
+uid="uid://6070tskvqk6h"
+path="res://.godot/imported/monkeytest.fbx-46be09cc8a1869b7c6919f3336771d56.scn"
 
 [deps]
 
-source_file="res://monkeytest.fbx"
+source_file="res://demo_assests/monkeytest.fbx"
+dest_files=["res://.godot/imported/monkeytest.fbx-46be09cc8a1869b7c6919f3336771d56.scn"]
 
 [params]
 
 nodes/root_type=""
 nodes/root_name=""
 nodes/apply_root_scale=true
-nodes/root_scale=1.0
+nodes/root_scale=0.2
 nodes/import_as_skeleton_bones=false
 meshes/ensure_tangents=true
 meshes/generate_lods=true

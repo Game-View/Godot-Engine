@@ -1,5 +1,7 @@
 extends Node3D
 
+class_name gizmo_Script
+
 @export
 var gizmo : Gizmo3D
 var _add : bool

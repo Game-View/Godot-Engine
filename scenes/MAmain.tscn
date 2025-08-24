@@ -99,7 +99,7 @@ stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer"]
 handle_input_locally = false
-size = Vector2i(230, 648)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
@@ -152,7 +152,7 @@ stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer2"]
 handle_input_locally = false
-size = Vector2i(922, 648)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="Camera" type="Camera3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport" node_paths=PackedStringArray("gizmo", "message")]

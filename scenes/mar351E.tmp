@@ -99,16 +99,9 @@ render_target_update_mode = 4
 transform = Transform3D(1, 0, 0, 0, 0.871222, 0.490889, 0, -0.490889, 0.871222, 0, 1.22246, 2.47152)
 
 [node name="Gizmo3D" type="Node3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
-visible = false
 script = ExtResource("9_hdfi2")
-rotate_speed = 0.1
-scale_factor = 0.001
-attraction_strength = 0.01
-screen_stop_distance = 30.0
+movement_speed = 5000
 
 [node name="HTTPRequest" type="HTTPRequest" parent="Control"]
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.988987, -0.00120629, 0.147994, -0.147999, -0.00806089, 0.988955, 0, -0.999967, -0.00815065, 0, 1.91499, 0)
 
 [connection signal="file_selected" from="Control/HBoxContainer/SubViewportContainer/SubViewport/FileDialog" to="Control" method="_on_file_dialog_file_selected"]
