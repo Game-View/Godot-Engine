@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://drhxk3riop3k2"]
+
+[ext_resource type="PackedScene" uid="uid://bxl0nij1q82oj" path="res://monkeytest.fbx" id="1_assdb"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="monkeytest" parent="." instance=ExtResource("1_assdb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.102006, -1.19209e-07, -0.245456)

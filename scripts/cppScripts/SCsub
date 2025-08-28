@@ -1,0 +1,6 @@
+# This SCsub file is needed to tell Godot's build system how to compile your module.
+# It should be placed in the same directory as your C++ files.
+
+Import('env')
+
+env.add_source_files(env.module_dir_prefix + 'my_gltf_loader.cpp')

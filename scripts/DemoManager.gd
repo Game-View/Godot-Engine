@@ -4,32 +4,39 @@ var sections : Array[MPSection] = []
 @export var items : Array[MP_Item_Info] = []
 var sectionContainer: VBoxContainer
 
+var TOC : Dictionary
+
+var TOC_callable = Callable(self, "_get_TOC")
+
+var signatureCallable = Callable(Node,"_get_url_from_server")
+
 var itemNum : int = 0
 
 @onready var http_request = $Control/HTTPRequest
-var TOC : Dictionary
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
+	signatureCallable = $Control/HBoxContainer._get_url_from_server
 	sectionContainer = $Control/HBoxContainer/SubViewportContainer/ScrollContainer/VBoxContainer
-	#$Control/HBoxContainer.sign_in("mikeytest","G4m3Vi3w!")
+	$Control/HBoxContainer.sign_in("mikeytest","G4m3Vi3w!",TOC_callable.bind("game-view-marketplace-test","assets/toc/context.json"))
 	#_get_TOC();
-	_fill_sections(items)
+	#_fill_sections(items)
 		
 
-func _get_TOC() -> void:
-	http_request.connect("request_completed", _on_TOC_request_completed)
-	var TOC_url = "https://gameview-marketplace.s3.us-east-2.amazonaws.com/testTOC.txt?response-content-disposition=inline&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEJj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMiJHMEUCIBHYMK5aMQC%2BZBFAeVCXbVt0GQ9LRAvod2DJw9RoBuq5AiEAxFNMN4AONnhtfJmWI35QjG%2BhZ9itYQnXswlePW1BTBkquQQI4f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2MjI5OTQ4OTY3NjYiDDh21kH8Uv6znOmHUiqNBMOwS1e%2FMAF7EZw4CZYJK92%2BazDsNfRebDFOO4gQagXGC%2FlDVN%2BOcCB7UsGLyEXLRSbrGOHHbg4VjHab4UC%2Bj%2BPZUie9xvrBzgjNIwWSQnOp4MrMGrXvYNgIbm2iTNKU%2FrZsL30L9KznyCemeqzNkXnXDoOlnauZyEHxf6drr4zbGu9wxx0Rn1%2BjBZO22BKU9fZfMYKlygQgF5UsuWJAHBkNygW%2B%2B2ur4OH7J%2BXBvTDxNL%2BLS1GNuALVGMOJTw7jrfxWPYhACfF%2F2J5MOOm3XUBrNDzBmaVxHLlTVwQY9W27b%2FQxwstmFaRgnThJzVF4mmcYA09cYsVYTulH5wbCFc5yJEOxxea24FMgwUAjRjGrhNP8x04oGdnuxg6%2B8kqrwdb2CkSyHwGjMneuO24Ntj6qLA4VvF0AB7bYd%2B7%2FkAxhGf8jIJUlcIZER1duS0XmCoCnwGftpQT%2BrGUilGUVwXH3LL7eycMis0fbMmpnQFzUU1nZn5NE5QWELgehzhwPsbzZkeaBhryA9sBF3qpxsuLJ8Fyxl84GD4J%2Fh4ejRYRJn9nUC5%2FFh%2FmtUM2wgfV3l%2BI7JA5XA2ZXVP9NWKBeQFTgUBhFs83YfR2TSv1J38wXhNBfjRf6FhIVL43wUOvs61RhEFXsWpBaVVLiD%2B0ETrv2c943wtycuz4M3tlRDgBYvrxiooTRNd1pRn0dDjCPspnFBjrFAp5BfcrJiujhBF%2B3rEByq1uZaspGPU%2Fb5zXhjB%2BY53UyNgJyppS9uBleh8Cw8TSuvvncW0XqEFrFzuF3S%2FJLi2kSFtYBtFuA81in4jnERAze66rLBf3Bqlmk8JpFR%2FRSz9aPFCg0qyoHOpAebIH2w2iTq81j5%2BbS3vS%2FDg8gxmf4CnkAZGN2fS2kzXPg2TZkU7xtj%2FE4JwGkc6BWVKYQztQ96b1Vv7LRMRGUVAmkkGq65J71au8rMna%2F5EPOElJnsoG%2FINpmaaJMpUBzEs%2BUT5C09h%2F%2BEjlc7ykChwVLS0qnShF1Ax0ZtJzeFkSnJYq2N9f00AhUSyhvpB5p6TmtfFO%2BUfqjfWpkR%2B4HnWJJoEjo3uhFbL%2FZJEP3Uw16hNwili%2BTn3zXnOX5qOY1rS4G2M6kzQfRXwMl8pkNeQ%2BagdoYFZfIPPM%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZCDLDW57IMCISPPF%2F20250821%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20250821T000109Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=0707d6530d9bde4a01ef89dd543f76ffe20f0f80a11ae1e08709496edfb004cc"
-	#"https://gameview-marketplace.s3.us-east-2.amazonaws.com/testTOC.txt"
-	http_request.request(TOC_url)
+func _get_TOC(bucket: String, item_path: String, callback : Callable = Callable()):
+	var http = HTTPRequest.new()
+	add_child(http)
+	http_request.connect("request_completed", _on_TOC_request_completed.bind(callback))
+	http_request.request(signatureCallable.call(bucket,item_path))
 	
-func _on_TOC_request_completed(result, response_code, headers, body):
+func _on_TOC_request_completed(result, response_code, headers, body,callback: Callable = Callable()):
 	print(response_code)
 	print("X")
 	if result == HTTPRequest.RESULT_SUCCESS and response_code == 200:
 		var file_content = body.get_string_from_utf8()
 		TOC = JSON.parse_string(file_content)
 		_fill_items(TOC)
+		if(callback.is_valid()):
+			callback.call()
 		http_request.disconnect("request_completed", _on_TOC_request_completed)
 		
 func _fill_items(TableOfContents : Dictionary):
@@ -44,55 +51,45 @@ func _fill_items(TableOfContents : Dictionary):
 		items.append(curItem)
 		var http_request_thread = HTTPRequest.new()
 		add_child(http_request_thread)
-		http_request_thread.connect("request_completed", _on_image_request_completed.bind(itemName,http_request_thread,curDetails['image']))
-		var url = "https://gameview-marketplace.s3.us-east-2.amazonaws.com/"+curDetails['image']
-		http_request_thread.request(url)
+		
+		if not FileAccess.file_exists("user://"+curDetails['image'].substr(curDetails['image'].rfind("/")+1)):
+			http_request_thread.connect("request_completed", _on_image_request_completed.bind(itemName,http_request_thread,curDetails['image']))
+			var url = signatureCallable.call("game-view-marketplace-test",curDetails['image'])
+			http_request_thread.request(url)
+		else:
+			curItem.imagePath = "user://"+curDetails['image'].substr(curDetails['image'].rfind("/")+1)
+			_attach_img(itemName,curItem.imagePath)
 
-func _fill_sections(items : Array[MP_Item_Info]):
-	for i in range(0,items.size()):
-		var section : MPSection = load("res://scenes/MP_Selection.tscn").instantiate()
-		sectionContainer.add_child(section)
-		section.assignDetails(items[i])
-		section._attach_script()
-		sections.append(section)
+func _add_to_sections(item: MP_Item_Info):
+	var section : MPSection = load("res://scenes/MP_Selection.tscn").instantiate()
+	item.imagePath = "user://"+item.imagePath.substr(item.imagePath.rfind("/")+1)
+	section.assignDetails(item)
+	section._attach_script(signatureCallable, item.path)
+	sections.append(section)
+	sectionContainer.add_child(section)
 		
 func _on_image_request_completed(result, response_code, headers, body,itemName,httpsthread,imgPath):
+	print(imgPath.substr(imgPath.rfind("/")+1))
 	print(itemName)
-	print("Y")
 	if result == HTTPRequest.RESULT_SUCCESS and response_code == 200:
 		print("Download successful! File size: ", body.size(), " bytes")
 		# Save the downloaded file to the user data directory.
-		var file = FileAccess.open("res://" + imgPath, FileAccess.WRITE)
+		var file = FileAccess.open("user://" + imgPath.substr(imgPath.rfind("/")+1), FileAccess.WRITE)
 		if file:
 			file.store_buffer(body)
 			file.close()
-			print("File saved to res:///" + imgPath)
-			_attach_img(itemName,imgPath)
+			print("Image File saved to user:///" + imgPath.substr(imgPath.rfind("/")+1))
+			_attach_img(itemName,"user://" + imgPath.substr(imgPath.rfind("/")+1))
 			# You can now load the FBX file into your scene.
 		else:
 			print("Error saving file.")
 	else:
-		print("Download failed. Response code: ", response_code)
+		print("Image Download failed. Response code: ", response_code)
 
 	itemNum+=1
-	if(itemNum==items.size()):
-		_fill_sections(items)
 
 func _attach_img(itemName, imgPath):
 	for item : MP_Item_Info in items:
 		if(item.title==itemName):
-			var new_texture = load(imgPath)
-			item.image = new_texture 
-			#var image = Image.new()
-			#var error = image.load(imgPath)
-			#if error == OK:
-				#var image_texture = ImageTexture.new()
-				#image_texture.create_from_image(image)
-				#item.image = new_texture 
-			#else:
-				#print("Failed to load image: ", error)
+			_add_to_sections(item)
 			return
-			
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass

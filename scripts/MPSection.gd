@@ -1,89 +1,80 @@
 class_name MPSection extends Control
 
 @export var filePath : String
-
+var item_name : String
+var img_path : String = ""
 @onready var http_request = $HTTPRequest
 
-var TOC_JSON : Dictionary
 
-var model_path : String
-# Called when the node enters the scene tree for the first time.
-#func _ready() -> void:
-	#$VBoxContainer/MP_Section.pressed.connect(_request_file)
+var presigned_callback = Callable(Node,"_get_url_from_server")
+		
 
-func _attach_script() -> void:
+
+func _attach_script(callback : Callable, download_url : String = "") -> void:
+	presigned_callback = callback
 	$VBoxContainer/MP_Section.pressed.connect(_load_item)
 
-func _request_file() -> void:
-	var public_url = "https://gameview-marketplace.s3.us-east-2.amazonaws.com/"+filePath
-	# Replace <region> with your bucket's actual AWS region.
-	# Send the GET request to download the file.
-	http_request.request(public_url)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
 func assignDetails(info : MP_Item_Info) -> bool:
-	if(!(info.image && info.title && info.USDprice && info.path)):
+	if(!(info.title && info.USDprice && info.path)):
 		$VBoxContainer/MP_Section/Title.text = "Not Found"
 		return false
 	$VBoxContainer/MP_Section/Title.text = info.title
 	$VBoxContainer/MP_Section/Price.text = "$" + str(info.USDprice)
-	$VBoxContainer/MP_Section/Image.texture = info.image
 	filePath = info.path
+	item_name = filePath.substr(filePath.rfind("/")+1)
+	img_path = info.imagePath
+	attachImage(img_path)
 	return true
-	
-func _on_request_completed(result, response_code, headers, body):
-	if result == HTTPRequest.RESULT_SUCCESS and response_code == 200:
-		print("Download successful! File size: ", body.size(), " bytes")
-		# Save the downloaded file to the user data directory.
-		var file = FileAccess.open("res://" + model_path, FileAccess.WRITE)
-		if file:
-			file.store_buffer(body)
-			file.close()
-			print("File saved to res:///" + model_path)
-			_load_item((file.get_path()));
-			# You can now load the FBX file into your scene.
-		else:
-			print("Error saving file.")
+
+func attachImage(imgPath: String):
+	var image = Image.load_from_file(imgPath)
+	if image:
+		var texture = ImageTexture.create_from_image(image)
+		$VBoxContainer/MP_Section/Image.texture = texture
+		print("Image attached successfully.")
 	else:
-		print("Download failed. Response code: ", response_code)
-	
-func _load_item(path : String = filePath) -> void:
-	if not FileAccess.file_exists(path):
-		print("Error: File not found at ", path)
-		return
-	
-	# Load the resource from the user data path.
-	var loaded_model = load(path)
-	
-	
+		print("Failed to load texture at: ", imgPath)
+		
+func _spawn_item(loaded_model):
 	if loaded_model:
-		# Check if the loaded resource is a valid 3D model scene.
-		if loaded_model is ArrayMesh:
-			var model_instance = MeshInstance3D.new()
-			model_instance.mesh = loaded_model
-			print("Mesh added to model and loaded to scene")
-			var final_model = _attach_extras(model_instance)
-			get_tree().root.add_child(final_model)
-		if loaded_model is PackedScene:
-			var model_instance = loaded_model.instantiate()
-			var final_model = _attach_extras(model_instance)
-			get_tree().root.add_child(final_model)
-			print("Model loaded and added to scene.")
-		else:
-			print("Error: The loaded file is not a valid 3D scene.")
+		var final_model = _attach_extras(loaded_model)
+		get_tree().root.add_child(final_model)
 	else:
 		print("Error: Failed to load the model.")
+		return false
+
+func _download_item(path : String = filePath) -> void:
+	MA_Import_Scene._request_file(filePath,presigned_callback,_first_time_create_scene)
+	
+func _first_time_create_scene(path):
+	var model_instance;
+	model_instance = await MA_Import_Scene.createScene(path, path.substr(path.rfind(".")+1))
+	_spawn_item(model_instance)
+
+func _load_item(path : String = filePath) -> void:
+	var model_name = path.substr(path.rfind("/")+1, path.rfind(".")-path.rfind("/")-1)
+	if(!path.begins_with("user")):
+		path = "user://"+filePath.substr(filePath.rfind("/")+1)
+	if not FileAccess.file_exists(path) and not ResourceLoader.exists("user://"+model_name+".tscn"):
+		print("Error: File not found, downloading now")
+		_download_item(path)
+		return
+	var model_instance;
+	if !ResourceLoader.exists("user://"+model_name+".tscn"):
+		print("user://"+model_name+".tscn")
+		model_instance = await MA_Import_Scene.createScene(path, path.substr(path.rfind(".")+1))
+		ResourceSaver.save(model_instance,"user://"+model_name+".gltf")
+		filePath = "user://"+model_name+".gltf"
+	else:
+		model_instance = ResourceLoader.load("user://"+model_name+".tscn").instantiate()
+		print("Model Exists")
+	_spawn_item(model_instance)
 
 func _attach_extras(item : Node3D) -> RigidbodyGizmo:
 	var top_node = RigidbodyGizmo.new();
 	var collider = CollisionShape3D.new()
 	collider.shape = BoxShape3D.new()
 	top_node.add_child(collider)
-	top_node.name = item.name
-	item.name = "base_Obj"
 	top_node.add_child(item)
 	top_node.collider = collider
 	if(item is MeshInstance3D):
@@ -100,4 +91,6 @@ func _attach_extras(item : Node3D) -> RigidbodyGizmo:
 	top_node.set_collision_mask_value(3, true)
 	top_node.set_collision_mask_value(2, true)
 	MA_Gizmo.target_objects.append(top_node)
+	top_node.name = item.name
+	item.name = "base_Obj"
 	return top_node

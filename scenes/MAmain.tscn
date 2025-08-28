@@ -1,19 +1,20 @@
-[gd_scene load_steps=8 format=3 uid="uid://dtd7rr86fuuaq"]
+[gd_scene load_steps=9 format=3 uid="uid://dtd7rr86fuuaq"]
 
-[ext_resource type="Script" path="res://scripts/splat_script.gd" id="1_y0dij"]
+[ext_resource type="Script" path="res://scripts/MA_splat_render_script.gd" id="1_wla4w"]
 [ext_resource type="Script" path="res://scripts/loadFile_script.gd" id="2_8nkm3"]
 [ext_resource type="Script" path="res://scripts/camera_script.gd" id="3_aptyj"]
 [ext_resource type="Script" path="res://addons/Gizmo3DScript/gizmo3D.gd" id="4_vt6f6"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_grauv"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ecad4"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_ahcnu"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_en6rc"]
 
-[node name="mainNode" type="Node3D" node_paths=PackedStringArray("gizmo")]
-script = ExtResource("1_y0dij")
-gizmo = NodePath("Control/HBoxContainer/SubViewportContainer2/SubViewport/Gizmo3D")
+[node name="mainNode" type="Node3D"]
+script = ExtResource("1_wla4w")
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
@@ -168,6 +169,7 @@ offset_bottom = 40.0
 [node name="TestCube" type="MeshInstance3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
 visible = false
 mesh = SubResource("BoxMesh_grauv")
+surface_material_override/0 = SubResource("ShaderMaterial_ecad4")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport/TestCube"]
 

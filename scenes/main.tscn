@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://dp060njxo03dx"]
+[gd_scene load_steps=12 format=3 uid="uid://dp060njxo03dx"]
 
-[ext_resource type="Script" path="res://scripts/splat_script.gd" id="1_wxobb"]
+[ext_resource type="Script" path="res://scripts/MA_splat_render_script.gd" id="1_pxm8t"]
 [ext_resource type="Script" path="res://scripts/camera_script.gd" id="2_ri7cd"]
 [ext_resource type="Script" path="res://addons/Gizmo3DScript/gizmo3D.gd" id="3_23uks"]
 [ext_resource type="Script" path="res://scripts/loadFile_script.gd" id="4_p4xnr"]
+[ext_resource type="Shader" uid="uid://b8xhkxr27d3ap" path="res://scenes/MA_splat_renderer_graph.tres" id="5_ccxg6"]
 
 [sub_resource type="Environment" id="Environment_j5h71"]
 background_mode = 1
@@ -15,11 +16,15 @@ background_color = Color(0.201527, 0.201527, 0.201527, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_en6rc"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_w2gma"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kokdi"]
+render_priority = 0
+shader = ExtResource("5_ccxg6")
 
-[node name="mainNode" type="Node3D" node_paths=PackedStringArray("gizmo")]
-script = ExtResource("1_wxobb")
-gizmo = NodePath("Control/HBoxContainer/SubViewportContainer2/SubViewport/Gizmo3D")
+[sub_resource type="BoxMesh" id="BoxMesh_w2gma"]
+material = SubResource("ShaderMaterial_kokdi")
+
+[node name="mainNode" type="Node3D"]
+script = ExtResource("1_pxm8t")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_j5h71")

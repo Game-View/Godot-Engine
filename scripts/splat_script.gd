@@ -99,7 +99,7 @@ func _load_ply_file(filename: String):
 	while not file.eof_reached():
 		if line.begins_with("element vertex"):
 			var line2 = int(line.split(" ")[2])
-			num_vertex += line2
+			num_vertex = line2
 			plyFile.vertex_count = line2
 		elif line.begins_with("property"):
 			num_properties += 1
@@ -107,16 +107,52 @@ func _load_ply_file(filename: String):
 			break
 		line = file.get_line()
 	
-	PlyFile.property_count = num_properties
-	print("num splats: ", plyFile.vertex_count)
-	print("num properties: ", num_properties)
+	# Corrected section for loading the PLY data
+	var data_bytes: PackedByteArray = file.get_buffer(plyFile.vertex_count * num_properties * 4)
+	var data: PackedFloat32Array = data_bytes.to_float32_array()
 	
-	#Why * 4?
-	var data: PackedFloat32Array = file.get_buffer(plyFile.vertex_count * num_properties * 4).to_float32_array()
-	plyFile.appendRawData(data)
-	print("vertices size: " + str(data.size()))
+	var new_data: PackedFloat32Array
+	var buffer_stride = 51 # From the shader
+	new_data.resize(num_vertex * buffer_stride)
+
+	for i in range(num_vertex):
+		var read_offset = i * num_properties
+		var write_offset = i * buffer_stride
+		
+		# Position (3 floats)
+		new_data[write_offset + 0] = data[read_offset + 0]
+		new_data[write_offset + 1] = data[read_offset + 1]
+		new_data[write_offset + 2] = data[read_offset + 2]
+		
+		# Scale (3 floats)
+		new_data[write_offset + 3] = data[read_offset + 3]
+		new_data[write_offset + 4] = data[read_offset + 4]
+		new_data[write_offset + 5] = data[read_offset + 5]
+		
+		# Opacity (1 float)
+		new_data[write_offset + 6] = data[read_offset + 6]
+		
+		# Rotation (4 floats)
+		new_data[write_offset + 7] = data[read_offset + 7]
+		new_data[write_offset + 8] = data[read_offset + 8]
+		new_data[write_offset + 9] = data[read_offset + 9]
+		new_data[write_offset + 10] = data[read_offset + 10]
+		
+		# Spherical Harmonics (3 floats for f_dc)
+		new_data[write_offset + 11] = data[read_offset + 11]
+		new_data[write_offset + 12] = data[read_offset + 12]
+		new_data[write_offset + 13] = data[read_offset + 13]
+
+	PlyFile.rawData = new_data
+	plyFile.vertex_count = num_vertex
+	PlyFile.property_count = buffer_stride
+	print("num splats: ", plyFile.vertex_count)
+	print("num properties: ", buffer_stride)
+	print("vertices size: " + str(PlyFile.rawData.size()))
+	
 	file.close()
 	return plyFile
+
 
 func _initialise_framebuffer_format():
 	_initialise_screen_texture()

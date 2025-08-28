@@ -1,14 +1,14 @@
-[gd_scene load_steps=12 format=3 uid="uid://c1ppd01h2h5gk"]
+[gd_scene load_steps=9 format=3 uid="uid://c1ppd01h2h5gk"]
 
 [ext_resource type="Script" path="res://scripts/DemoManager.gd" id="1_o557v"]
-[ext_resource type="Script" path="res://scripts/MP_Item_Info.gd" id="2_p0vft"]
-[ext_resource type="Resource" uid="uid://c6m0dtt8rvbs8" path="res://demo_assests/DItem1.tres" id="3_3ny2o"]
-[ext_resource type="Script" path="res://scenes/awsInit.gd" id="3_xcecs"]
-[ext_resource type="Resource" uid="uid://b2odb6fvgpy32" path="res://demo_assests/DItem2.tres" id="4_2b6x2"]
-[ext_resource type="Script" path="res://presignUrl.gd" id="4_p8cwi"]
-[ext_resource type="Resource" uid="uid://d38gjluoupng5" path="res://demo_assests/DItem3.tres" id="5_wsnbj"]
-[ext_resource type="Script" path="res://scenes/MPSelector.gd" id="6_m8y4i"]
-[ext_resource type="Script" path="res://MA_Gizmo.gd" id="9_hdfi2"]
+[ext_resource type="Script" path="res://scripts/awsInit.gd" id="3_xcecs"]
+[ext_resource type="Script" path="res://scripts/presignUrl.gd" id="4_p8cwi"]
+[ext_resource type="Script" path="res://scripts/MA_Import_Scene.gd" id="5_l880j"]
+[ext_resource type="Script" path="res://scripts/MA_Gizmo.gd" id="9_hdfi2"]
+
+[sub_resource type="GDScript" id="GDScript_14vdd"]
+script/source = "extends Control
+"
 
 [sub_resource type="Theme" id="Theme_kiu0q"]
 
@@ -16,7 +16,6 @@
 
 [node name="MarketplaceScene" type="Node3D"]
 script = ExtResource("1_o557v")
-items = Array[ExtResource("2_p0vft")]([ExtResource("3_3ny2o"), ExtResource("4_2b6x2"), ExtResource("5_wsnbj")])
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -25,7 +24,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("6_m8y4i")
+script = SubResource("GDScript_14vdd")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control"]
 layout_mode = 1
@@ -89,6 +88,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 4.0
 stretch = true
+script = ExtResource("5_l880j")
 
 [node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer2"]
 handle_input_locally = false

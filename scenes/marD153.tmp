@@ -1,0 +1,111 @@
+[gd_scene load_steps=9 format=3 uid="uid://c1ppd01h2h5gk"]
+
+[ext_resource type="Script" path="res://scripts/DemoManager.gd" id="1_o557v"]
+[ext_resource type="Script" path="res://scripts/awsInit.gd" id="3_xcecs"]
+[ext_resource type="Script" path="res://scripts/presignUrl.gd" id="4_p8cwi"]
+[ext_resource type="Script" path="res://scripts/MA_Import_Scene.gd" id="5_l880j"]
+[ext_resource type="Script" path="res://scripts/MPSelector.gd" id="6_m8y4i"]
+[ext_resource type="Script" path="res://scripts/MA_Gizmo.gd" id="9_hdfi2"]
+
+[sub_resource type="Theme" id="Theme_kiu0q"]
+
+[sub_resource type="Theme" id="Theme_vpj0q"]
+
+[node name="MarketplaceScene" type="Node3D"]
+script = ExtResource("1_o557v")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_m8y4i")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+script = ExtResource("3_xcecs")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/HBoxContainer"]
+y_sort_enabled = true
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+script = ExtResource("4_p8cwi")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/HBoxContainer/SubViewportContainer"]
+custom_minimum_size = Vector2(230, 500)
+layout_mode = 2
+theme = SubResource("Theme_kiu0q")
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer/SubViewportContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = SubResource("Theme_vpj0q")
+theme_override_constants/separation = 105
+
+[node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(230, 648)
+render_target_update_mode = 4
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+
+[node name="FileDialog" type="FileDialog" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 2
+size = Vector2i(400, 300)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+root_subfolder = "D:\\GameView\\Godot_Projects\\splatandgizmo\\splats"
+use_native_dialog = true
+
+[node name="Button" type="Button" parent="Control/HBoxContainer/SubViewportContainer/SubViewport"]
+offset_left = 12.0
+offset_top = 587.0
+offset_right = 205.0
+offset_bottom = 618.0
+text = "Publish To Market Place
+"
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+stretch = true
+script = ExtResource("5_l880j")
+
+[node name="SubViewport" type="SubViewport" parent="Control/HBoxContainer/SubViewportContainer2"]
+handle_input_locally = false
+size = Vector2i(922, 648)
+render_target_update_mode = 4
+
+[node name="Camera" type="Camera3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.871222, 0.490889, 0, -0.490889, 0.871222, 0, 1.22246, 2.47152)
+
+[node name="Gizmo3D" type="Node3D" parent="Control/HBoxContainer/SubViewportContainer2/SubViewport"]
+visible = false
+script = ExtResource("9_hdfi2")
+rotate_speed = 0.1
+scale_factor = 0.001
+attraction_strength = 0.01
+screen_stop_distance = 30.0
+
+[node name="HTTPRequest" type="HTTPRequest" parent="Control"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.988987, -0.00120629, 0.147994, -0.147999, -0.00806089, 0.988955, 0, -0.999967, -0.00815065, 0, 1.91499, 0)
+
+[connection signal="file_selected" from="Control/HBoxContainer/SubViewportContainer/SubViewport/FileDialog" to="Control" method="_on_file_dialog_file_selected"]
