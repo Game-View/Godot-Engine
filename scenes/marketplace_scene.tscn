@@ -1,8 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://c1ppd01h2h5gk"]
+[gd_scene load_steps=8 format=3 uid="uid://c1ppd01h2h5gk"]
 
 [ext_resource type="Script" path="res://scripts/DemoManager.gd" id="1_o557v"]
 [ext_resource type="Script" path="res://scripts/awsInit.gd" id="3_xcecs"]
-[ext_resource type="Script" path="res://scripts/presignUrl.gd" id="4_p8cwi"]
 [ext_resource type="Script" path="res://scripts/MA_Import_Scene.gd" id="5_l880j"]
 [ext_resource type="Script" path="res://scripts/MA_Gizmo.gd" id="9_hdfi2"]
 
@@ -41,7 +40,6 @@ y_sort_enabled = true
 layout_mode = 2
 size_flags_horizontal = 3
 stretch = true
-script = ExtResource("4_p8cwi")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/HBoxContainer/SubViewportContainer"]
 custom_minimum_size = Vector2(230, 500)

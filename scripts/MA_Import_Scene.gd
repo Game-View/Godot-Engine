@@ -6,15 +6,17 @@ func _ready() -> void:
 	if(!instance):
 		instance = self
 
+#Sort through file type
 static func createScene(model_path: String, file_type : String) -> Node:
 	match file_type:
 		"fbx":
 			return await create_node_with_fbx(model_path,model_path.substr(0,model_path.rfind(".")) + ".gltf")
-		"obj":
+		"obj": #obj still uses fbx2gltf_path
 			return await create_node_with_fbx(model_path,model_path.substr(0,model_path.rfind(".")) + ".gltf")
 		_:
 			return null
 
+#Converts FBX file to GLTF file depending on System type
 static func convert_fbx_to_gltf(fbx_path: String, gltf_path: String) -> bool:
 	# Check if the .fbx file exists
 	if not FileAccess.file_exists(fbx_path):
@@ -24,11 +26,11 @@ static func convert_fbx_to_gltf(fbx_path: String, gltf_path: String) -> bool:
 	# Path to the FBX2glTF binary (bundled with the game)
 	var fbx2gltf_path = ""
 	if OS.get_name() == "Windows":
-		fbx2gltf_path = "res://tools/FBX2glTF-windows-x86_64/FBX2glTF-windows-x86_64.exe"  # Adjust for your setup
+		fbx2gltf_path = "res://tools/FBX2glTF-windows-x86_64/FBX2glTF-windows-x86_64.exe"
 	elif OS.get_name() in ["Linux", "X11"]:
-		fbx2gltf_path = "res://tools/FBX2glTF-linux-x86_64/FBX2glTF-linux-x86_64"  # Ensure executable permissions
+		fbx2gltf_path = "res://tools/FBX2glTF-linux-x86_64/FBX2glTF-linux-x86_64"
 	elif OS.get_name() == "macOS":
-		fbx2gltf_path = "res://tools/FBX2glTF-macos-x86_64/FBX2glTF-macos-x86_64"  # Adjust for macOS
+		fbx2gltf_path = "res://tools/FBX2glTF-macos-x86_64/FBX2glTF-macos-x86_64"
 	else:
 		print("Error: Unsupported platform for FBX2glTF.")
 		return false
@@ -40,7 +42,7 @@ static func convert_fbx_to_gltf(fbx_path: String, gltf_path: String) -> bool:
 	
 	# Execute FBX2glTF to convert .fbx to .gltf
 	var output = []
-	#ProjectSettings.globalize_path( EDITOR ONLY
+	#Arguments
 	var args = ["--input", ProjectSettings.globalize_path(fbx_path), "--output", ProjectSettings.globalize_path(gltf_path)]
 	var exit_code = OS.execute(ProjectSettings.globalize_path(fbx2gltf_path), args, output, true)
 	if exit_code != 0:
@@ -55,7 +57,8 @@ static func convert_fbx_to_gltf(fbx_path: String, gltf_path: String) -> bool:
 	
 	print("Successfully converted .fbx to .gltf at: ", gltf_path)
 	return true
-# Static function to create a scene with an .fbx model and register a UID
+	
+# Converts FBX to GLTF, then makes the GLTF available to the ResourceLoader
 static func create_node_with_fbx(fbx_path: String, gltf_path: String) -> Node:
 	if not FileAccess.file_exists(fbx_path):
 		print("Error: .fbx file does not exist at: ", fbx_path)
@@ -66,7 +69,9 @@ static func create_node_with_fbx(fbx_path: String, gltf_path: String) -> Node:
 		return null
 	return await make_gltf_available(gltf_path)
 
+#Makes the GLTF available to the ResourceLoader
 static func make_gltf_available(save_path: String) -> Node:
+	#If in editor mode
 	if Engine.is_editor_hint():
 		# Trigger import in the editor
 		var editor_interface = Engine.get_singleton("EditorInterface")
@@ -89,10 +94,12 @@ static func make_gltf_available(save_path: String) -> Node:
 					print("Failed to load GLTF resource")
 			else:
 				print("GLTF resource not found at: ", save_path)
+	#If in play mode
 	else:
 		return load_gltf_at_runtime(save_path)
 	return null
 		
+#Loads the GLTF at runtime so ResourceLoader can see it
 static func load_gltf_at_runtime(save_path: String) -> Node:
 	# Read the GLTF file
 	var file = FileAccess.open(save_path, FileAccess.READ)
@@ -111,7 +118,7 @@ static func load_gltf_at_runtime(save_path: String) -> Node:
 			else:
 				print("Failed to generate scene from GLTF")
 				return null
-			# Optionally, save as a PackedScene for future use
+			#Save as a PackedScene for future use
 			var scene = PackedScene.new()
 			scene.pack(root_node)
 			scene.resource_name = save_path.substr(save_path.rfind("/"),save_path.rfind("."))
@@ -124,7 +131,8 @@ static func load_gltf_at_runtime(save_path: String) -> Node:
 		print("Failed to read GLTF file: ", FileAccess.get_open_error())
 	return null
 
-static func download_item(result, response_code, headers, body, item_name, callback: Callable):
+#Downloads item file after _request_file is complete
+static func download_item(result, response_code, headers, body, item_name, callback: Callable,httpRequest):
 	print(response_code)
 	if result == HTTPRequest.RESULT_SUCCESS and response_code == 200:
 		print("Download successful! File size: ", body.size(), " bytes")
@@ -136,13 +144,15 @@ static func download_item(result, response_code, headers, body, item_name, callb
 			callback.call("user://"+item_name)
 		else:
 			print("Error saving file.")
+			
+	if(httpRequest):
+		httpRequest.queue_free()
 		
 
+#Request item file from server
 static func _request_file(file_path: String, presign_callback : Callable,callback : Callable) -> void:
-	# Replace <region> with your bucket's actual AWS region.
-	# Send the GET request to download the file.
 	var http = HTTPRequest.new()
 	instance.add_child(http)
 	print("Requesting file: " + file_path)
-	http.connect("request_completed", download_item.bind(file_path.substr(file_path.rfind("/")+1),callback))
+	http.connect("request_completed", download_item.bind(file_path.substr(file_path.rfind("/")+1),callback,http)) #next step
 	http.request(presign_callback.call("game-view-marketplace-test",file_path))

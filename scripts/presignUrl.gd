@@ -1,12 +1,7 @@
-# This script contains the correct implementation for generating a presigned URL for AWS S3
-# using the Signature Version 4 (SigV4) authentication process.
-
-# The code fixes flaws in the HMAC-SHA256 calculation and the hashing of the canonical request.
-
-extends Node
+class_name Presigned_URL extends Node
 
 # This function computes the SHA256 hash of a string.
-func compute_sha256(data: String) -> String:
+static func compute_sha256(data: String) -> String:
 	var ctx = HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
 	ctx.update(data.to_utf8_buffer())
@@ -15,13 +10,13 @@ func compute_sha256(data: String) -> String:
 
 # This function correctly implements the HMAC-SHA256 digest using Godot's Crypto class.
 # It takes a key and a message (both as PackedByteArray) and returns the signature.
-func hmac_sha256_digest(key: PackedByteArray, message: PackedByteArray) -> PackedByteArray:
+static func hmac_sha256_digest(key: PackedByteArray, message: PackedByteArray) -> PackedByteArray:
 	var crypto = Crypto.new()
 	var hmac = crypto.hmac_digest(HashingContext.HASH_SHA256, key, message)
 	return hmac
 
 # This is the main function to generate the presigned URL.
-func generate_presigned_url(bucket: String, object_key: String, access_key: String, secret_key: String, region: String, http_method: String = "GET", session_token: String = "", expires_in: int = 3600) -> String:
+static func generate_presigned_url(bucket: String, object_key: String, access_key: String, secret_key: String, region: String, http_method: String = "GET", session_token: String = "", expires_in: int = 3600) -> String:
 	# 1. Prepare Date and Host
 	var timestamp = Time.get_datetime_dict_from_system(true)
 	var date = "%04d%02d%02d" % [timestamp.year, timestamp.month, timestamp.day]
@@ -77,7 +72,6 @@ func generate_presigned_url(bucket: String, object_key: String, access_key: Stri
 	]
 	
 	# 5. Calculate the Final Signature
-	# Key derivation for SigV4
 	var k_secret = ("AWS4" + secret_key).to_utf8_buffer()
 	var date_key = hmac_sha256_digest(k_secret, date.to_utf8_buffer())
 	var date_region_key = hmac_sha256_digest(date_key, region.to_utf8_buffer())
@@ -95,5 +89,5 @@ func generate_presigned_url(bucket: String, object_key: String, access_key: Stri
 		canonical_query_string,
 		signature]
 	
-	print("URL: ", presigned_url)
+	#EDIT FOR WHEN THE PRESIGNED URL IS NOT VALID
 	return presigned_url

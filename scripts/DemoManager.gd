@@ -1,7 +1,7 @@
 extends Node3D
 
 var sections : Array[MPSection] = []
-@export var items : Array[MP_Item_Info] = []
+var items : Array[MP_Item_Info] = []
 var sectionContainer: VBoxContainer
 
 var TOC : Dictionary
@@ -29,8 +29,6 @@ func _get_TOC(bucket: String, item_path: String, callback : Callable = Callable(
 	http_request.request(signatureCallable.call(bucket,item_path))
 	
 func _on_TOC_request_completed(result, response_code, headers, body,callback: Callable = Callable()):
-	print(response_code)
-	print("X")
 	if result == HTTPRequest.RESULT_SUCCESS and response_code == 200:
 		var file_content = body.get_string_from_utf8()
 		TOC = JSON.parse_string(file_content)
